@@ -1,0 +1,55 @@
+version: '0.0.{build}'
+
+image: Visual Studio 2017
+
+init:
+  - ps: >-
+      if($env:appveyor_repo_tag -eq 'True') {
+        Update-AppveyorBuild -Version "$($env:APPVEYOR_REPO_TAG_NAME.TrimStart("v"))"
+      }
+
+platform:
+  - x64
+
+configuration:
+  - Debug
+  - Release
+
+install:
+  - set PATH=%PATH%;%PYTHON%/Scripts/
+  - pip.exe install conan
+  - conan user
+  - conan remote add systelab-bintray https://api.bintray.com/conan/systelab/conan
+  - conan --version
+
+before_build:
+  - md build
+  - cd build
+  - conan install .. -s build_type=%CONFIGURATION%
+  - cmake .. -G "Visual Studio 15 2017 Win64"
+
+build:
+  project: $(APPVEYOR_BUILD_FOLDER)\build\RESTAPICore.sln
+
+after_build:
+  - conan export-pkg ../conanfile.py RESTAPICore/%APPVEYOR_BUILD_VERSION%@systelab/stable -s build_type=%CONFIGURATION%
+  - conan test ../test_package/conanfile.py RESTAPICore/%APPVEYOR_BUILD_VERSION%@systelab/stable -s build_type=%CONFIGURATION%
+
+test_script:
+  - ps: cd bin
+  - RESTAPICoreTest.exe --gtest_output=xml:RESTAPICoreTest.xml
+
+after_test:
+  - ps: (new-object net.webclient).UploadFile("https://ci.appveyor.com/api/testresults/junit/$($env:APPVEYOR_JOB_ID)", (Resolve-Path .\RESTAPICoreTest.xml))
+
+artifacts:
+  - path: 'build\lib\RESTAPICore.lib'
+    name: RESTAPICore.lib
+
+deploy_script:
+  - ps: >- 
+      if($env:appveyor_repo_tag -eq 'True') {
+        conan upload RESTAPICore/$env:appveyor_build_version@systelab/stable --all -r systelab-bintray --force
+      } else {
+        echo "Not uploading because this is not a tag build"
+      }

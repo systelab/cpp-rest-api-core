@@ -1,0 +1,110 @@
+language: cpp
+
+matrix:
+  include:
+  - os: linux
+    dist: xenial
+    compiler: gcc
+    addons:
+      apt:
+        sources:
+          - ubuntu-toolchain-r-test
+        packages:
+          - gcc-7
+          - g++-7
+    env:
+      - BUILD_TYPE=Release
+      - CONAN_BUILD_TYPE=Release
+      - COMPILER_LIBCXX=libstdc++11
+
+  - os: linux
+    dist: xenial
+    compiler: gcc
+    addons:
+      apt:
+        sources:
+          - ubuntu-toolchain-r-test
+        packages:
+          - gcc-7
+          - g++-7
+    env:
+      - BUILD_TYPE=Debug
+      - CONAN_BUILD_TYPE=Debug
+      - COMPILER_LIBCXX=libstdc++11
+
+  - os: linux
+    dist: xenial
+    compiler: gcc
+    addons:
+      apt:
+        sources:
+          - ubuntu-toolchain-r-test
+        packages:
+          - gcc-7
+          - g++-7
+    env:
+      - BUILD_TYPE=Coverage
+      - CONAN_BUILD_TYPE=Debug
+      - COMPILER_LIBCXX=libstdc++11
+
+  - os: osx
+    osx_image: xcode10.1
+    compiler: clang   
+    env:
+      - BUILD_TYPE=Release
+      - CONAN_BUILD_TYPE=Release
+      - COMPILER_LIBCXX=libc++
+
+install: 
+  - if [ $TRAVIS_OS_NAME == linux ]; then sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 90; fi
+  - if [ $TRAVIS_OS_NAME == linux ]; then sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-7 90; fi
+  - if [[ $TRAVIS_OS_NAME == linux && $BUILD_TYPE == Coverage ]]; then sudo apt-get install lcov; fi
+  - if [ $TRAVIS_OS_NAME == linux ]; then pip install conan --user; fi
+  - if [ $TRAVIS_OS_NAME == osx ]; then brew install conan; fi
+  - conan user
+  - conan remote add systelab-bintray https://api.bintray.com/conan/systelab/conan
+  - conan --version
+
+script:
+  - g++ --version
+  - mkdir -p build
+  - cd build
+  - conan install .. -s build_type=${CONAN_BUILD_TYPE} -s compiler.libcxx=${COMPILER_LIBCXX}
+  - cmake .. -DCMAKE_BUILD_TYPE=${BUILD_TYPE}
+  - make
+  - cd bin
+  - if [ $TRAVIS_OS_NAME == osx ]; then cp -f *.dylib /usr/local/lib; fi
+  - ./RESTAPICoreTest
+  - cd ..
+  - if [[ $TRAVIS_OS_NAME == linux && $BUILD_TYPE == Coverage ]]; then make RESTAPICoreTestCoverage; fi
+  - cd test
+  - cd RESTAPICoreTest
+  - ctest
+  - cd ..
+  - cd ..
+  - |
+    if [ "$BUILD_TYPE" == "Release" ] || [ "$BUILD_TYPE" == "Debug" ]; then
+      if [ -n "$TRAVIS_TAG" ]; then
+        conan export-pkg ../conanfile.py "RESTAPICore/${TRAVIS_TAG:1}@systelab/stable" -s build_type=${CONAN_BUILD_TYPE} -s compiler.libcxx=${COMPILER_LIBCXX};
+      else
+        conan export-pkg ../conanfile.py "RESTAPICore/0.0.${TRAVIS_BUILD_NUMBER}@systelab/stable" -s build_type=${CONAN_BUILD_TYPE} -s compiler.libcxx=${COMPILER_LIBCXX};
+      fi
+    fi
+  - |
+    if [ "$BUILD_TYPE" == "Release" ] || [ "$BUILD_TYPE" == "Debug" ]; then
+      if [ -n "$TRAVIS_TAG" ]; then
+        conan test ../test_package/conanfile.py RESTAPICore/${TRAVIS_TAG:1}@systelab/stable -s build_type=${CONAN_BUILD_TYPE} -s compiler.libcxx=${COMPILER_LIBCXX};
+      else
+        conan test ../test_package/conanfile.py RESTAPICore/0.0.${TRAVIS_BUILD_NUMBER}@systelab/stable -s build_type=${CONAN_BUILD_TYPE} -s compiler.libcxx=${COMPILER_LIBCXX};
+      fi
+    fi
+
+deploy:
+  provider: script
+  script: conan upload "RESTAPICore/${TRAVIS_TAG:1}@systelab/stable" --all -r systelab-bintray --force
+  on:
+    tags: true
+    condition: "$BUILD_TYPE != Coverage"
+
+after_success:
+  - if [[ $TRAVIS_OS_NAME == linux && $BUILD_TYPE == Coverage ]]; then bash <(curl -s https://codecov.io/bash); fi
