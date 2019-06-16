@@ -1,7 +1,7 @@
 from conans import ConanFile, tools
 
 class RESTAPICoreConan(ConanFile):
-    name = "JWTUtils"
+    name = "RESTAPICore"
     description = "C++ REST API framework"
     url = "https://github.com/systelab/cpp-rest-api-core"
     homepage = "https://github.com/systelab/cpp-rest-api-core"
@@ -10,7 +10,6 @@ class RESTAPICoreConan(ConanFile):
     license = "MIT"
     generators = "cmake"
     settings = "os", "compiler", "build_type", "arch"
-    default_options = "OpenSSL:shared=True"
 
     def requirements(self):
         self.requires("RapidJSONAdapter/1.0.0@systelab/stable")
