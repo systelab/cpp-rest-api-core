@@ -27,15 +27,13 @@ git_clone_repository(URL https://github.com/systelab/cpp-jwt-utils.git          
 include_directories(${CMAKE_SOURCE_DIR}/src)
 include_directories(${CMAKE_SOURCE_DIR}/test)
 include_directories(${CMAKE_SOURCE_DIR}/extern/JWTUtils/src)
-include_directories(${CMAKE_SOURCE_DIR}/extern/JWTUtils/src)
-include_directories(${CMAKE_SOURCE_DIR}/src)
-include_directories(${CMAKE_SOURCE_DIR}/test)
 
-# Add subprojects
+# Add extern projects
 add_subdirectory(${CMAKE_SOURCE_DIR}/extern/JSONAdapter/JSONAdapterTestUtilities)
 add_subdirectory(${CMAKE_SOURCE_DIR}/extern/RapidJSONAdapter/src/RapidJSONAdapter)
-add_subdirectory(${CMAKE_SOURCE_DIR}/extern/JWTUtils/src/JWTUtils)
+#add_subdirectory(${CMAKE_SOURCE_DIR}/extern/JWTUtils/src/JWTUtils)
 
+# Add library projects
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/RESTAPICore)
-add_subdirectory(${CMAKE_SOURCE_DIR}/test/RESTAPICoreTest)
+#add_subdirectory(${CMAKE_SOURCE_DIR}/test/RESTAPICoreTest)
 
