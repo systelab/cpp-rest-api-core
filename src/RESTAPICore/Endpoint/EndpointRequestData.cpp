@@ -7,11 +7,13 @@ namespace systelab { namespace rest_api_core {
 	EndpointRequestData::EndpointRequestData(const EndpointRequestParams& parameters,
 											 const std::string& content,
 											 const systelab::web_server::RequestHeaders& headers,
-											 const systelab::web_server::RequestQueryStrings& queryStrings)
+											 const systelab::web_server::RequestQueryStrings& queryStrings,
+											 const EndpointRequestAuthorizationClaims& authorizationClaims)
 		:m_parameters(parameters)
 		,m_content(content)
 		,m_headers(headers)
 		,m_queryStrings(queryStrings)
+		,m_authorizationClaims(authorizationClaims)
 	{
 	}
 	
@@ -35,6 +37,11 @@ namespace systelab { namespace rest_api_core {
 	const systelab::web_server::RequestQueryStrings& EndpointRequestData::getQueryStrings() const
 	{
 		return m_queryStrings;
+	}
+
+	const EndpointRequestAuthorizationClaims& EndpointRequestData::getAuthorizationClaims() const
+	{
+		return m_authorizationClaims;
 	}
 
 }}
