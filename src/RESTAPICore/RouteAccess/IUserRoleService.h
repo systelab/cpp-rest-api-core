@@ -11,7 +11,7 @@ namespace systelab { namespace rest_api_core {
 	public:
 		virtual ~IUserRoleService() = default;
 
-		virtual std::vector<std::string> getUserRoles(const std::string&) const = 0;
+		virtual std::vector<std::string> getUserRoles(const std::string& username) const = 0;
 	};
 
 }}
