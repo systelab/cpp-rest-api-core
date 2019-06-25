@@ -2,6 +2,7 @@
 #include "Route.h"
 
 #include "RouteAccess/IRouteAccessValidator.h"
+#include "Router/IAuthorizationDataBuilder.h"
 
 #include "WebServerAdapterInterface/Model/Reply.h"
 #include "WebServerAdapterInterface/Model/Request.h"
@@ -14,12 +15,14 @@ namespace systelab { namespace rest_api_core {
 
 	Route::Route(const std::string& method,
 				 const std::string& uri,
-				 const IRouteAccessValidator& accessValidator,
-				 std::function < std::unique_ptr<IEndpoint>() > factoryMethod)
+				 const IAuthorizationDataBuilder& authorizationDataBuilder,
+				 const std::vector<RouteAccessValidatorFactoryMethod>& accessValidatorFactoryMethods,
+				 EndpointFactoryMethod endpointFactoryMethod)
 		:m_method(method)
 		,m_fragments(buildFragmentsFromURI(uri))
-		,m_accessValidator(accessValidator)
-		,m_factoryMethod(factoryMethod)
+		,m_authorizationDataBuilder(authorizationDataBuilder)
+		,m_accessValidatorFactoryMethods(accessValidatorFactoryMethods)
+		,m_endpointFactoryMethod(endpointFactoryMethod)
 	{
 	}
 
@@ -36,15 +39,19 @@ namespace systelab { namespace rest_api_core {
 			return nullptr;
 		}
 
-		if (!m_accessValidator.hasAccess(*requestData))
+		for (auto& accessValidatorFactoryMethod : m_accessValidatorFactoryMethods)
 		{
-			std::map<std::string, std::string> headers = { {std::string("Content-Type"), std::string("application/json")} };
-			return std::make_unique<systelab::web_server::Reply>(systelab::web_server::Reply::FORBIDDEN, headers, "{}");
+			auto accessValidator = accessValidatorFactoryMethod();
+			if (!accessValidator->hasAccess(*requestData))
+			{
+				std::map<std::string, std::string> headers = { {std::string("Content-Type"), std::string("application/json")} };
+				return std::make_unique<systelab::web_server::Reply>(systelab::web_server::Reply::FORBIDDEN, headers, "{}");
+			}
 		}
 
 		try
 		{
-			std::unique_ptr<IEndpoint> endpoint = m_factoryMethod();
+			std::unique_ptr<IEndpoint> endpoint = m_endpointFactoryMethod();
 			if (endpoint)
 			{
 				return endpoint->execute(*requestData);
@@ -55,26 +62,6 @@ namespace systelab { namespace rest_api_core {
 		}
 
 		return nullptr;
-	}
-
-	std::vector<RouteFragment> Route::buildFragmentsFromURI(const std::string& uri) const
-	{
-		std::vector<RouteFragment> fragments;
-
-		std::istringstream iss(uri);
-		std::string item;
-
-		while (std::getline(iss, item, '/'))
-		{
-			if (item.empty())
-			{
-				continue;
-			}
-
-			fragments.push_back(RouteFragment(item));
-		}
-
-		return fragments;
 	}
 
 	bool Route::validateMethod(const systelab::web_server::Request& request) const
@@ -117,8 +104,31 @@ namespace systelab { namespace rest_api_core {
 			}
 		}
 
+		auto authorizationData = m_authorizationDataBuilder.buildAuthorizationData(request.getHeaders());
+
 		return std::make_unique<EndpointRequestData>(requestParams, request.getContent(),
-													 request.getHeaders(), request.getQueryStrings());
+													 request.getHeaders(), request.getQueryStrings(),
+													 *authorizationData);
+	}
+
+	std::vector<RouteFragment> Route::buildFragmentsFromURI(const std::string& uri) const
+	{
+		std::vector<RouteFragment> fragments;
+
+		std::istringstream iss(uri);
+		std::string item;
+
+		while (std::getline(iss, item, '/'))
+		{
+			if (item.empty())
+			{
+				continue;
+			}
+
+			fragments.push_back(RouteFragment(item));
+		}
+
+		return fragments;
 	}
 
 }}
