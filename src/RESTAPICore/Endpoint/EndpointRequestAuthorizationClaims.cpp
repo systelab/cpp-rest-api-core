@@ -25,6 +25,27 @@ namespace systelab { namespace rest_api_core {
 
 	EndpointRequestAuthorizationClaims::~EndpointRequestAuthorizationClaims() = default;
 
+	unsigned int EndpointRequestAuthorizationClaims::getClaimCount() const
+	{
+		return (unsigned int) m_claims.size();
+	}
+
+	std::vector<std::string> EndpointRequestAuthorizationClaims::getClaimNames() const
+	{
+		std::vector<std::string> names;
+		for (auto claim : m_claims)
+		{
+			names.push_back(claim.first);
+		}
+
+		return names;
+	}
+
+	bool EndpointRequestAuthorizationClaims::hasClaim(const std::string& name) const
+	{
+		return (m_claims.find(name) != m_claims.end());
+	}
+
 	std::string EndpointRequestAuthorizationClaims::getClaim(const std::string& name) const
 	{
 		auto it = m_claims.find(name);

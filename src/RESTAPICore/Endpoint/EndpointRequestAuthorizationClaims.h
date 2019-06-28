@@ -11,6 +11,9 @@ namespace systelab { namespace rest_api_core {
 		EndpointRequestAuthorizationClaims(const EndpointRequestAuthorizationClaims&);
 		virtual ~EndpointRequestAuthorizationClaims();
 
+		unsigned int getClaimCount() const;
+		std::vector<std::string> getClaimNames() const;
+		bool hasClaim(const std::string& name) const;
 		std::string getClaim(const std::string& name) const;
 
 	private:
