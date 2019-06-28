@@ -59,5 +59,26 @@ namespace systelab { namespace rest_api_core {
 		}
 	}
 
+	EndpointRequestAuthorizationClaims& EndpointRequestAuthorizationClaims::operator=(const EndpointRequestAuthorizationClaims& other)
+	{
+		m_claims = other.m_claims;
+		return *this;
+	}
+
+	bool operator== (const EndpointRequestAuthorizationClaims& lhs, const EndpointRequestAuthorizationClaims& rhs)
+	{
+		if (lhs.m_claims != rhs.m_claims)
+		{
+			return false;
+		}
+
+		return true;
+	}
+
+	bool operator!= (const EndpointRequestAuthorizationClaims& lhs, const EndpointRequestAuthorizationClaims& rhs)
+	{
+		return !(lhs == rhs);
+	}
+
 }}
 
