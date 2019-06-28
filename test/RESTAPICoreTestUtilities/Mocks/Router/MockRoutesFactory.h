@@ -2,6 +2,8 @@
 
 #include "RESTAPICore/Router/IRoutesFactory.h"
 
+#include "RESTAPICore/Router/IRoute.h"
+
 #include "WebServerAdapterInterface/Model/Reply.h"
 #include "WebServerAdapterInterface/Model/Request.h"
 

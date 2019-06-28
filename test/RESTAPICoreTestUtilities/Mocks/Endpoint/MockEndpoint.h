@@ -1,6 +1,7 @@
 #pragma once
 
 #include "RESTAPICore/Endpoint/IEndpoint.h"
+#include "RESTAPICore/Endpoint/EndpointRequestData.h"
 
 #include "WebServerAdapterInterface/Model/Reply.h"
 
