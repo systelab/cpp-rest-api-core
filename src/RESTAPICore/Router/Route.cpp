@@ -1,6 +1,9 @@
 #include "stdafx.h"
 #include "Route.h"
 
+#include "Endpoint/EndpointRequestAuthorizationClaims.h"
+#include "Endpoint/EndpointRequestData.h"
+#include "Endpoint/EndpointRequestParams.h"
 #include "RouteAccess/IRouteAccessValidator.h"
 #include "Router/IAuthorizationDataBuilder.h"
 

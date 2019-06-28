@@ -1,14 +1,14 @@
 #include "stdafx.h"
 #include "AuthorizationDataBuilder.h"
 
+#include "Endpoint/EndpointRequestAuthorizationClaims.h"
 #include "RouteAccess/IRouteAccessValidator.h"
 #include "RouteAccess/IUserRoleService.h"
 
 #include "WebServerAdapterInterface/Model/Headers.h"
+#include "WebServerAdapterInterface/Model/RequestHeaders.h"
 
 #include "JWTUtils/Services/ITokenParserService.h"
-
-#include <sstream>
 
 
 namespace systelab { namespace rest_api_core {

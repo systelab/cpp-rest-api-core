@@ -2,9 +2,8 @@
 #include "UserRoleRouteAccessValidator.h"
 
 #include "Endpoint/ClaimConstants.h"
+#include "Endpoint/EndpointRequestData.h"
 #include "RouteAccess/IUserRoleService.h"
-
-#include <sstream>
 
 
 namespace systelab { namespace rest_api_core {

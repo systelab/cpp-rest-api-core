@@ -1,9 +1,12 @@
 #pragma once
 
 // STL
-#include <stdio.h>
+#include <functional>
 #include <memory>
+#include <sstream>
+#include <stdio.h>
 #include <string>
+
 
 // GTEST
 #include <gtest/gtest.h>
