@@ -17,6 +17,7 @@ namespace systelab { namespace rest_api_core {
 							const systelab::web_server::RequestHeaders&,
 							const systelab::web_server::RequestQueryStrings&,
 							const EndpointRequestAuthorizationClaims&);
+		EndpointRequestData(const EndpointRequestData&);
 		virtual ~EndpointRequestData();
 
 		const EndpointRequestParams& getParameters() const;

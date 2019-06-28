@@ -16,6 +16,15 @@ namespace systelab { namespace rest_api_core {
 		,m_authorizationClaims(authorizationClaims)
 	{
 	}
+
+	EndpointRequestData::EndpointRequestData(const EndpointRequestData& other)
+		:m_parameters(other.m_parameters)
+		,m_content(other.m_content)
+		,m_headers(other.m_headers)
+		,m_queryStrings(other.m_queryStrings)
+		,m_authorizationClaims(other.m_authorizationClaims)
+	{
+	}
 	
 	EndpointRequestData::~EndpointRequestData() = default;
 
