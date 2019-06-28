@@ -106,5 +106,29 @@ namespace systelab { namespace rest_api_core {
 		m_numericParameters.insert({ name, value });
 	}
 
+	EndpointRequestParams& EndpointRequestParams::operator=(const EndpointRequestParams& other)
+	{
+		m_stringParameters = other.m_stringParameters;
+		m_numericParameters = other.m_numericParameters;
+
+		return *this;
+	}
+
+	bool operator== (const EndpointRequestParams& lhs, const EndpointRequestParams& rhs)
+	{
+		if ((lhs.m_stringParameters  != rhs.m_stringParameters) ||
+			(lhs.m_numericParameters != rhs.m_numericParameters))
+		{
+			return false;
+		}
+
+		return true;
+	}
+
+	bool operator!= (const EndpointRequestParams& lhs, const EndpointRequestParams& rhs)
+	{
+		return !(lhs == rhs);
+	}
+
 }}
 

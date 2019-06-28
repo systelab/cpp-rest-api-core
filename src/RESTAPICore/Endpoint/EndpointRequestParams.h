@@ -26,6 +26,10 @@ namespace systelab { namespace rest_api_core {
 		unsigned int getNumericParameter(const std::string& name) const;
 		void addNumericParameter(const std::string& name, unsigned int value);
 
+		EndpointRequestParams& operator= (const EndpointRequestParams&);
+		friend bool operator== (const EndpointRequestParams&, const EndpointRequestParams&);
+		friend bool operator!= (const EndpointRequestParams&, const EndpointRequestParams&);
+
 	private:
 		std::map<std::string, std::string> m_stringParameters;
 		std::map<std::string, unsigned int> m_numericParameters;
