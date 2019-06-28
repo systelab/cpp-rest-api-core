@@ -35,5 +35,6 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/extern/RapidJSONAdapter/src/RapidJSONAdapte
 
 # Add library projects
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/RESTAPICore)
+add_subdirectory(${CMAKE_SOURCE_DIR}/test/RESTAPICoreTestUtilities)
 add_subdirectory(${CMAKE_SOURCE_DIR}/test/RESTAPICoreTest)
 
