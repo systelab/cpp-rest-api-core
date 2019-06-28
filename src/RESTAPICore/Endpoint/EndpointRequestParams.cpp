@@ -9,9 +9,21 @@ namespace systelab { namespace rest_api_core {
 		,m_numericParameters()
 	{
 	}
-	
-	EndpointRequestParams::~EndpointRequestParams() = default;
 
+	EndpointRequestParams::EndpointRequestParams(const EndpointRequestParams& other)
+		:m_stringParameters(other.m_stringParameters)
+		,m_numericParameters(other.m_numericParameters)
+	{
+	}
+
+	EndpointRequestParams::EndpointRequestParams(const std::map<std::string, std::string>& stringParameters,
+												 const std::map<std::string, unsigned int>& numericParameters)
+		:m_stringParameters(stringParameters)
+		,m_numericParameters(numericParameters)
+	{
+	}
+
+	EndpointRequestParams::~EndpointRequestParams() = default;
 
 	// String parameters
 	unsigned int EndpointRequestParams::getStringParameterCount() const

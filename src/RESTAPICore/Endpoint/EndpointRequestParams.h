@@ -7,6 +7,9 @@ namespace systelab { namespace rest_api_core {
 	{
 	public:
 		EndpointRequestParams();
+		EndpointRequestParams(const EndpointRequestParams&);
+		EndpointRequestParams(const std::map<std::string, std::string>&,
+							  const std::map<std::string, unsigned int>&);
 		virtual ~EndpointRequestParams();
 
 		// String parameters
