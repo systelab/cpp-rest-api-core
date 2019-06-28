@@ -25,6 +25,7 @@ namespace systelab { namespace rest_api_core {
 
 	EndpointRequestParams::~EndpointRequestParams() = default;
 
+
 	// String parameters
 	unsigned int EndpointRequestParams::getStringParameterCount() const
 	{
