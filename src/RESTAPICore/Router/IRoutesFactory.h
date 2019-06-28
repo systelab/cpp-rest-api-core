@@ -1,15 +1,5 @@
 #pragma once
 
-#include "IRoute.h"
-
-#include "RESTAPICore/Endpoint/IEndpoint.h"
-#include "RESTAPICore/Router/RouteFragment.h"
-
-#include <functional>
-#include <memory>
-#include <vector>
-
-
 namespace systelab { namespace rest_api_core {
 
 	class IEndpoint;

@@ -1,13 +1,12 @@
 #pragma once
 
-#include "EndpointRequestData.h"
-
-
 namespace systelab { namespace web_server {
 	class Reply;
 }}
 
 namespace systelab { namespace rest_api_core {
+
+	class EndpointRequestData;
 
 	class IEndpoint
 	{
