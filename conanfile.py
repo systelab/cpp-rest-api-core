@@ -8,11 +8,10 @@ class RESTAPICoreConan(ConanFile):
     author = "CSW <csw@werfen.com>"
     topics = ("conan", "rest", "api", "framework")
     license = "MIT"
-    generators = "cmake"
+    generators = "cmake_find_package"
     settings = "os", "compiler", "build_type", "arch"
 
     def requirements(self):
-        self.requires("RapidJSONAdapter/1.0.0@systelab/stable")
         self.requires("JWTUtils/1.0.0@systelab/stable")
 
     def imports(self):
