@@ -1,5 +1,7 @@
-# Configure preprocessor definitions
-add_compile_options(-DRAPIDJSON_HAS_STDSTRING=1)
+cmake_minimum_required(VERSION 3.2)
+
+# Find 3rd party dependencides
+find_package(JWTUtils)
 
 # Add project folder into includes
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -9,7 +11,7 @@ set(REST_API_CORE RESTAPICore)
 file(GLOB_RECURSE REST_API_CORE_SRC "*.cpp")
 file(GLOB_RECURSE REST_API_CORE_HDR "*.h")
 add_library(${REST_API_CORE} STATIC ${REST_API_CORE_SRC} ${REST_API_CORE_HDR})
-target_link_libraries(${REST_API_CORE} ${CONAN_LIBS})
+target_link_libraries(${REST_API_CORE} JWTUtils)
 
 #Configure source groups
 foreach(FILE ${REST_API_CORE_SRC} ${REST_API_CORE_HDR}) 

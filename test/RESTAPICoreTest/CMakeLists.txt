@@ -1,7 +1,7 @@
-enable_testing()
+cmake_minimum_required(VERSION 3.2)
 
-# Configure preprocessor definitions
-add_compile_options(-DBOOST_ALL_DYN_LINK -DSQLITE_HAS_CODEC)
+# Enable testing module
+enable_testing()
 
 # Add project folder into includes
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -11,7 +11,7 @@ set(REST_API_CORE_TEST_PROJECT RESTAPICoreTest)
 file(GLOB_RECURSE REST_API_CORE_TEST_PROJECT_SRC "*.cpp")
 file(GLOB_RECURSE REST_API_CORE_TEST_PROJECT_HDR "*.h")
 add_executable(${REST_API_CORE_TEST_PROJECT} ${REST_API_CORE_TEST_PROJECT_SRC} ${REST_API_CORE_TEST_PROJECT_HDR})
-target_link_libraries(${REST_API_CORE_TEST_PROJECT} gmock_main RESTAPICore RESTAPICoreTestUtilities RapidJSONAdapter JWTUtils ${CONAN_LIBS})
+target_link_libraries(${REST_API_CORE_TEST_PROJECT} gmock_main RESTAPICore RESTAPICoreTestUtilities)
 
 #Configure source groups
 foreach(FILE ${REST_API_CORE_TEST_PROJECT_SRC} ${REST_API_CORE_TEST_PROJECT_HDR}) 
@@ -30,3 +30,9 @@ endforeach()
 
 # Register tests
 add_test(NAME RESTAPICoreTest COMMAND ${REST_API_CORE_TEST_PROJECT})
+
+# Additional target for code coverage analysis
+if (CMAKE_BUILD_TYPE STREQUAL "Coverage")
+	include(CodeCoverage)
+	setup_target_for_coverage(RESTAPICoreTestCoverage RESTAPICoreTest coverage)
+endif()
