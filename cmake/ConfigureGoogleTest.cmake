@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.2)
 
 macro(configure_google_test)
     # Download and unpack googletest at configure time
-    configure_file(${CMAKE_MODULE_PATH}/GoogleTest.in googletest-download/CMakeLists.txt)
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cmake/GoogleTest.in googletest-download/CMakeLists.txt)
     execute_process(COMMAND ${CMAKE_COMMAND} -G ${CMAKE_GENERATOR} .
                     RESULT_VARIABLE result
                     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/googletest-download)
