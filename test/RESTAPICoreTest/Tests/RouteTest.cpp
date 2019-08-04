@@ -4,6 +4,8 @@
 
 #include "RESTAPICoreTestUtilities/Mocks/Endpoint/MockEndpoint.h"
 
+#include "WebServerAdapterInterface/Model/Request.h"
+
 
 using namespace testing;
 
@@ -26,34 +28,51 @@ namespace systelab { namespace rest_api_core { namespace unit_test {
 
 		void setUpEndpointFactoryMethod()
 		{
-
 			m_endpointFactoryMethod =
-				[this]()-> std::unique_ptr<IEndpoint>
+				[this]() -> std::unique_ptr<IEndpoint>
 				{
 					auto endpoint = std::make_unique<test_utility::MockEndpoint>();
-					//ON_CALL(*endpoint, executeProxy(_)).WillByDefault(Return(m_request));
+					ON_CALL(*endpoint, executeProxy(_)).WillByDefault(Invoke(
+						[this](const EndpointRequestData&) -> web_server::Reply*
+						{
+							auto reply = std::make_unique<web_server::Reply>();
+							reply->setStatus(web_server::Reply::OK);
+							reply->setContent("{}");
+							return reply.release();
+						}
+					));
+
 					return endpoint;
 				};
+		}
 
-			//m_route = m_routesFactory->buildRoute("POST", "/rest/api/test", {},
-												  
+		std::unique_ptr<web_server::Request> buildSimpleRequest(const std::string& method,
+																const std::string& uri)
+		{
+			auto request = std::make_unique<web_server::Request>();
+			request->setMethod(method);
+			request->setURI(uri);
+
+			return request;
 		}
 
 	protected:
 		std::string m_jwtKey;
 		std::unique_ptr<RoutesFactory> m_routesFactory;
-
-		
 		std::function< std::unique_ptr<IEndpoint>() > m_endpointFactoryMethod;
-
-		std::unique_ptr<IRoute> m_route;
-
 	};
 
 
-	TEST_F(RouteTest, testEncodeStringReturnsExpectedValue)
+	TEST_F(RouteTest, testPublicRouteReturnsExpectedReplyWhenMatchingRequest)
 	{
-		//m_route->execute(m_request);
+		auto route = m_routesFactory->buildRoute("POST", "/rest/api/test", {}, m_endpointFactoryMethod);
+
+		auto request = buildSimpleRequest("POST", "/rest/api/test");
+		auto reply = route->execute(*request);
+
+		ASSERT_TRUE(reply != NULL);
+		ASSERT_EQ(web_server::Reply::OK, reply->getStatus());
+		ASSERT_EQ("{}", reply->getContent());
 	}
 
 }}}
