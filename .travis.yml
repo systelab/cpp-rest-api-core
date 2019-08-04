@@ -73,7 +73,9 @@ script:
   - cmake .. -DCMAKE_BUILD_TYPE=${BUILD_TYPE}
   - make
   - cd bin
+  - if [ $TRAVIS_OS_NAME == osx ]; then cd ${BUILD_TYPE}; fi
   - if [ $TRAVIS_OS_NAME == osx ]; then cp -f *.dylib /usr/local/lib; fi
+  - if [ $TRAVIS_OS_NAME == osx ]; then cd ..; fi
   - ./RESTAPICoreTest
   - cd ..
   - if [[ $TRAVIS_OS_NAME == linux && $BUILD_TYPE == Coverage ]]; then make RESTAPICoreTestCoverage; fi

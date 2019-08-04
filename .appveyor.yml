@@ -37,13 +37,14 @@ after_build:
 
 test_script:
   - ps: cd bin
+  - ps: cd $env:CONFIGURATION
   - RESTAPICoreTest.exe --gtest_output=xml:RESTAPICoreTest.xml
 
 after_test:
   - ps: (new-object net.webclient).UploadFile("https://ci.appveyor.com/api/testresults/junit/$($env:APPVEYOR_JOB_ID)", (Resolve-Path .\RESTAPICoreTest.xml))
 
 artifacts:
-  - path: 'build\lib\RESTAPICore.lib'
+  - path: 'build\lib\%CONFIGURATION%\RESTAPICore.lib'
     name: RESTAPICore.lib
 
 deploy_script:
