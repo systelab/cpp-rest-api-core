@@ -32,6 +32,7 @@ include_directories(${CMAKE_SOURCE_DIR}/extern/JWTUtils/src)
 # Add extern projects
 add_subdirectory(${CMAKE_SOURCE_DIR}/extern/JSONAdapter/JSONAdapterTestUtilities)
 add_subdirectory(${CMAKE_SOURCE_DIR}/extern/RapidJSONAdapter/src/RapidJSONAdapter)
+add_subdirectory(${CMAKE_SOURCE_DIR}/extern/WebServerAdapter/WebServerAdapterTestUtilities)
 add_subdirectory(${CMAKE_SOURCE_DIR}/extern/JWTUtils/src/JWTUtils)
 
 # Add library projects
