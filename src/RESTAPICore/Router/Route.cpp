@@ -81,8 +81,8 @@ namespace systelab { namespace rest_api_core {
 		}
 
 		EndpointRequestParams requestParams;
-		unsigned int nFragments = m_fragments.size();
-		for (unsigned int i = 0; i < nFragments; i++)
+		size_t nFragments = m_fragments.size();
+		for (size_t i = 0; i < nFragments; i++)
 		{
 			const auto& requestFragment = requestFragments[i];
 			if (requestFragment.isNumericParameter() || requestFragment.isStringParameter())
