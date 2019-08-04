@@ -4,6 +4,15 @@
 
 namespace systelab { namespace rest_api_core {
 
+	EndpointRequestData::EndpointRequestData()
+		:m_parameters()
+		,m_content("")
+		,m_headers()
+		,m_queryStrings()
+		,m_authorizationClaims()
+	{
+	}
+
 	EndpointRequestData::EndpointRequestData(const EndpointRequestParams& parameters,
 											 const std::string& content,
 											 const systelab::web_server::RequestHeaders& headers,
@@ -53,5 +62,54 @@ namespace systelab { namespace rest_api_core {
 		return m_authorizationClaims;
 	}
 
+	void EndpointRequestData::setParameters(const EndpointRequestParams& parameters)
+	{
+		m_parameters = parameters;
+	}
+
+	void EndpointRequestData::setContent(const std::string& content)
+	{
+		m_content = content;
+	}
+
+	void EndpointRequestData::setHeaders(const systelab::web_server::RequestHeaders& headers)
+	{
+		m_headers = headers;
+	}
+
+	void EndpointRequestData::setQueryStrings(const systelab::web_server::RequestQueryStrings& queryStrings)
+	{
+		m_queryStrings = queryStrings;
+	}
+
+	void EndpointRequestData::setAuthorizationClaims(const EndpointRequestAuthorizationClaims& authorizationClaims)
+	{
+		m_authorizationClaims = authorizationClaims;
+	}
+
+	EndpointRequestData& EndpointRequestData::operator= (const EndpointRequestData& other)
+	{
+		m_parameters = other.m_parameters;
+		m_content = other.m_content;
+		m_headers = other.m_headers;
+		m_queryStrings = other.m_queryStrings;
+		m_authorizationClaims = other.m_authorizationClaims;
+
+		return *this;
+	}
+
+	bool operator== (const EndpointRequestData& lhs, const EndpointRequestData& rhs)
+	{
+		return (lhs.m_parameters == rhs.m_parameters) &&
+			   (lhs.m_content == rhs.m_content) &&
+			   (lhs.m_headers == rhs.m_headers) &&
+			   (lhs.m_queryStrings == rhs.m_queryStrings) &&
+			   (lhs.m_authorizationClaims == rhs.m_authorizationClaims);
+	}
+
+	bool operator!= (const EndpointRequestData& lhs, const EndpointRequestData& rhs)
+	{
+		return !(lhs == rhs);
+	}
 }}
 

@@ -12,6 +12,7 @@ namespace systelab { namespace rest_api_core {
 	class EndpointRequestData
 	{
 	public:
+		EndpointRequestData();
 		EndpointRequestData(const EndpointRequestParams&,
 							const std::string&,
 							const systelab::web_server::RequestHeaders&,
@@ -26,12 +27,22 @@ namespace systelab { namespace rest_api_core {
 		const systelab::web_server::RequestQueryStrings& getQueryStrings() const;
 		const EndpointRequestAuthorizationClaims& getAuthorizationClaims() const;
 
+		void setParameters(const EndpointRequestParams&);
+		void setContent(const std::string&);
+		void setHeaders(const systelab::web_server::RequestHeaders&);
+		void setQueryStrings(const systelab::web_server::RequestQueryStrings&);
+		void setAuthorizationClaims(const EndpointRequestAuthorizationClaims&);
+
+		EndpointRequestData& operator= (const EndpointRequestData&);
+		friend bool operator== (const EndpointRequestData&, const EndpointRequestData&);
+		friend bool operator!= (const EndpointRequestData&, const EndpointRequestData&);
+
 	private:
-		const EndpointRequestParams m_parameters;
-		const std::string m_content;
-		const systelab::web_server::RequestHeaders m_headers;
-		const systelab::web_server::RequestQueryStrings m_queryStrings;
-		const EndpointRequestAuthorizationClaims& m_authorizationClaims;
+		EndpointRequestParams m_parameters;
+		std::string m_content;
+		systelab::web_server::RequestHeaders m_headers;
+		systelab::web_server::RequestQueryStrings m_queryStrings;
+		EndpointRequestAuthorizationClaims m_authorizationClaims;
 	};
 
 }}
