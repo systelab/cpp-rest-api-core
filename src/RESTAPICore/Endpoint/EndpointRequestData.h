@@ -33,10 +33,6 @@ namespace systelab { namespace rest_api_core {
 		void setQueryStrings(const systelab::web_server::RequestQueryStrings&);
 		void setAuthorizationClaims(const EndpointRequestAuthorizationClaims&);
 
-		EndpointRequestData& operator= (const EndpointRequestData&);
-		friend bool operator== (const EndpointRequestData&, const EndpointRequestData&);
-		friend bool operator!= (const EndpointRequestData&, const EndpointRequestData&);
-
 	private:
 		EndpointRequestParams m_parameters;
 		std::string m_content;
