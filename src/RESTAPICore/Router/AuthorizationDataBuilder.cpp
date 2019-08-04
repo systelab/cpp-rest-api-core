@@ -25,7 +25,7 @@ namespace systelab { namespace rest_api_core {
 	std::unique_ptr<EndpointRequestAuthorizationClaims>
 	AuthorizationDataBuilder::buildAuthorizationData(const systelab::web_server::RequestHeaders& headers) const
 	{
-		if (headers.hasHeader(systelab::web_server::AUTHORIZATION))
+		if (!headers.hasHeader(systelab::web_server::AUTHORIZATION))
 		{
 			return std::make_unique<EndpointRequestAuthorizationClaims>();
 		}
