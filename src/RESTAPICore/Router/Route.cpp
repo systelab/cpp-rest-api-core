@@ -64,7 +64,7 @@ namespace systelab { namespace rest_api_core {
 				std::string content = "{ \"reason\": \"Unable to build endpoint for " +
 									  request.getMethod() + " " + request.getURI() + "\"}";
 				std::map<std::string, std::string> headers = { {std::string("Content-Type"), std::string("application/json")} };
-				return std::make_unique<systelab::web_server::Reply>(systelab::web_server::Reply::INTERNAL_SERVER_ERROR, headers, "{}");
+				return std::make_unique<systelab::web_server::Reply>(systelab::web_server::Reply::INTERNAL_SERVER_ERROR, headers, content);
 			}
 		}
 		catch (std::exception& exc)
@@ -72,7 +72,7 @@ namespace systelab { namespace rest_api_core {
 			std::string content = "{ \"reason\": \"Unknown error while processing endpoint " +
 								  request.getMethod() + " " + request.getURI() + ": " + exc.what() + "\"}";
 			std::map<std::string, std::string> headers = { {std::string("Content-Type"), std::string("application/json")} };
-			return std::make_unique<systelab::web_server::Reply>(systelab::web_server::Reply::INTERNAL_SERVER_ERROR, headers, "{}");
+			return std::make_unique<systelab::web_server::Reply>(systelab::web_server::Reply::INTERNAL_SERVER_ERROR, headers, content);
 		}
 	}
 
