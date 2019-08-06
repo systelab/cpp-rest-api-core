@@ -59,12 +59,21 @@ namespace systelab { namespace rest_api_core {
 			{
 				return endpoint->execute(*requestData);
 			}
+			else
+			{
+				std::string content = "{ \"reason\": \"Unable to build endpoint for " +
+									  request.getMethod() + " " + request.getURI() + "\"}";
+				std::map<std::string, std::string> headers = { {std::string("Content-Type"), std::string("application/json")} };
+				return std::make_unique<systelab::web_server::Reply>(systelab::web_server::Reply::INTERNAL_SERVER_ERROR, headers, "{}");
+			}
 		}
-		catch (std::exception&)
+		catch (std::exception& exc)
 		{
+			std::string content = "{ \"reason\": \"Unknown error while processing endpoint " +
+								  request.getMethod() + " " + request.getURI() + ": " + exc.what() + "\"}";
+			std::map<std::string, std::string> headers = { {std::string("Content-Type"), std::string("application/json")} };
+			return std::make_unique<systelab::web_server::Reply>(systelab::web_server::Reply::INTERNAL_SERVER_ERROR, headers, "{}");
 		}
-
-		return nullptr;
 	}
 
 	bool Route::validateMethod(const systelab::web_server::Request& request) const
