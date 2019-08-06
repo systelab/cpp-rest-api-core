@@ -447,4 +447,44 @@ namespace systelab { namespace rest_api_core { namespace unit_test {
 		ASSERT_EQ("{}", reply->getContent());
 	}
 
+
+	// Error handling
+	TEST_F(RouteTest, testUnableToBuildEndpointReturnsInternalServerErrorReply)
+	{
+		m_endpointFactoryMethod =
+			[this]() -> std::unique_ptr<IEndpoint>
+			{
+				return std::unique_ptr<IEndpoint>();
+			};
+
+		auto route = m_routesFactory->buildRoute("GET", "/rest/api/test", {}, m_endpointFactoryMethod);
+		auto request = buildSimpleRequest("GET", "/rest/api/test");
+		auto reply = route->execute(*request);
+
+		ASSERT_TRUE(reply != NULL);
+		ASSERT_EQ(web_server::Reply::INTERNAL_SERVER_ERROR, reply->getStatus());
+		ASSERT_EQ("{ \"reason\": \"Unable to build endpoint for GET /rest/api/test\"}", reply->getContent());
+	}
+
+	TEST_F(RouteTest, testEndpointExceptionReturnsInternalServerErrorReply)
+	{
+		m_endpointFactoryMethod =
+			[this]() -> std::unique_ptr<IEndpoint>
+			{
+				auto endpoint = std::make_unique<MockEndpoint>();
+				ON_CALL(*endpoint, executeProxy(_)).WillByDefault(Throw(std::runtime_error("Thrown error details")));
+				return endpoint;
+			};
+
+		auto route = m_routesFactory->buildRoute("GET", "/rest/api/test", {}, m_endpointFactoryMethod);
+		auto request = buildSimpleRequest("GET", "/rest/api/test");
+		auto reply = route->execute(*request);
+
+		ASSERT_TRUE(reply != NULL);
+		ASSERT_EQ(web_server::Reply::INTERNAL_SERVER_ERROR, reply->getStatus());
+		ASSERT_EQ("{ \"reason\": \"Unknown error while processing endpoint "
+				  "GET /rest/api/test: Thrown error details\"}", reply->getContent());
+	}
+
+
 }}}
