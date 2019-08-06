@@ -59,6 +59,11 @@ namespace systelab { namespace rest_api_core {
 		}
 	}
 
+	void EndpointRequestAuthorizationClaims::addClaim(const std::string& name, const std::string& value)
+	{
+		m_claims.insert(std::make_pair(name, value));
+	}
+
 	EndpointRequestAuthorizationClaims& EndpointRequestAuthorizationClaims::operator=(const EndpointRequestAuthorizationClaims& other)
 	{
 		m_claims = other.m_claims;

@@ -16,6 +16,8 @@ namespace systelab { namespace rest_api_core {
 		bool hasClaim(const std::string& name) const;
 		std::string getClaim(const std::string& name) const;
 
+		void addClaim(const std::string& name, const std::string& value);
+
 		EndpointRequestAuthorizationClaims& operator= (const EndpointRequestAuthorizationClaims&);
 		friend bool operator== (const EndpointRequestAuthorizationClaims&, const EndpointRequestAuthorizationClaims&);
 		friend bool operator!= (const EndpointRequestAuthorizationClaims&, const EndpointRequestAuthorizationClaims&);
