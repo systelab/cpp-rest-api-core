@@ -152,6 +152,7 @@ router->addRoute(routesFactory.buildRoute("GET", "/rest/api/anotherendpoint" {},
                                           []() { return std::make_unique<AnotherGetEndpoint>() });
 ```
 
+
 ### Routes with parameters
 
 Routes with parameters can be registered by using an specific syntax on associated URIs:
@@ -174,10 +175,10 @@ When a request matches a registered route with parameters, the associated endpoi
 
 ```cpp
 std::unique_ptr<systelab::web_server::Reply>
-YourGetMultipleParamsEndpoint::execute(const systelab::rest_api_core::EndpointRequestData& endpointRequestData) override
+YourGetMultipleParamsEndpoint::execute(const systelab::rest_api_core::EndpointRequestData& requestData)
 {
-    unsigned int id1 = endpointRequestData.getParameters().getNumericParameter("id1");
-    std::string id2 = endpointRequestData.getParameters().getStringParameter("id2");
+    unsigned int id1 = requestData.getParameters().getNumericParameter("id1");
+    std::string id2 = requestData.getParameters().getStringParameter("id2");
     ...
 }
 ```
@@ -185,8 +186,22 @@ YourGetMultipleParamsEndpoint::execute(const systelab::rest_api_core::EndpointRe
 
 ### Authorization through JWT
 
-`TBD`
+When working with a [Bearer Authentication](https://swagger.io/docs/specification/authentication/bearer-authentication/) scheme, the library automatically decodes the tokens contained on the `Authorization` header of the HTTP requests. It uses the key provided to the `RoutesFactory` constructor to verify that token signature is correct. Then, claims contained on decoded [JSON Web Tokens](https://jwt.io/) are provided to the matching endpoint as part of the `systelab::rest_api_core::EndpointRequestData` object:
 
+```cpp
+std::unique_ptr<systelab::web_server::Reply>
+YourEndpoint::execute(const systelab::rest_api_core::EndpointRequestData& requestData)
+{
+    auto& authorizationClaims = requestData.getAuthorizationClaims();
+    std::vector<std::string> claimNames = authorizationClaims.getClaimNames();
+    for (auto name : claimNames)
+    {
+        std::string claimValue = authorizationClaims.getClaim(name);
+	...
+    }	
+    ...
+}
+```
 
 ### Routes with user role access validation
 
