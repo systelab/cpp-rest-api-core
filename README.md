@@ -113,29 +113,29 @@ public:
 class RESTAPIWebService : public systelab::web_server::IWebService
 {
 public:
-	RESTAPIWebService()
-	{
-		std::string jwtKey = "HereGoesYourJWTSecretKey";
-		auto routesFactory = std::make_unique<systelab::rest_api_core::RoutesFactory>(jwtKey);
+    RESTAPIWebService()
+    {
+        std::string jwtKey = "HereGoesYourJWTSecretKey";
+	auto routesFactory = std::make_unique<systelab::rest_api_core::RoutesFactory>(jwtKey);
 	
-		m_router = std::make_unique<systelab::rest_api_core::Router>();
-		m_router->addRoute(routesFactory.buildRoute("GET", "/rest/api/yourendpoint" {},
-		                                            []() { return std::make_unique<YourEndpoint>() }) );
-		// Register more routes here
-	}
+	m_router = std::make_unique<systelab::rest_api_core::Router>();
+	m_router->addRoute(routesFactory.buildRoute("GET", "/rest/api/yourendpoint" {},
+		                                    []() { return std::make_unique<YourEndpoint>() }) );
+	// Register more routes here
+    }
 
-	std::unique_ptr<systelab::web_server::Reply>
-	process(const systelab::web_server::Request& request) const override
-	{
-		return m_router->process(request);
-	}
+    std::unique_ptr<systelab::web_server::Reply>
+    process(const systelab::web_server::Request& request) const override
+    {
+        return m_router->process(request);
+    }
 
 private:
-	std::unique_ptr<systelab::rest_api_core::Router> m_router;
+    std::unique_ptr<systelab::rest_api_core::Router> m_router;
 };
 ```
 
-Thus, when the web service receives a GET HTTP request with "/rest/api/yourendpoint" URI, it redirects this request to the ```YourEndpoint```class implemented previously.
+> Thus, when the web service receives a GET HTTP request with "/rest/api/yourendpoint" URI, it redirects this request to the ```YourEndpoint```class implemented previously.
 
 
 3) Register additional routes to other endpoints:
