@@ -86,7 +86,7 @@ target_link_libraries(${MY_PROJECT} ${CONAN_LIBS})
 
 1) Implement an endpoint by creating a class that inherits ```systelab::rest_api_core::IEndpoint``` interface:
 
-```
+```cpp
 #include "RESTAPICore/Endpoint/IEndpoint.h"
 
 class YourEndpoint : public systelab::rest_api_core::IEndpoint
@@ -94,11 +94,10 @@ class YourEndpoint : public systelab::rest_api_core::IEndpoint
 public:
     YourEndpoint() = default;
 
-    std::unique_ptr<systelab::web_server::Reply> execute(const systelab::rest_api_core::EndpointRequestData&) override
+    std::unique_ptr<systelab::web_server::Reply>
+    execute(const systelab::rest_api_core::EndpointRequestData&) override
     {
-        // Process given systelab::rest_api_core::EndpointRequestData and
-        // generate a systelab::web_server::Reply
-
+        // Process given systelab::rest_api_core::EndpointRequestData and generate a systelab::web_server::Reply
         return reply;
     }
 };
@@ -107,7 +106,7 @@ public:
 
 2) Create a web service that sets up a router with a single route registered:
 
-```
+```cpp
 #include "RESTAPICore/Router/Router.h"
 #include "RESTAPICore/Router/RoutesFactory.h"
 
@@ -120,11 +119,13 @@ public:
 		auto routesFactory = std::make_unique<systelab::rest_api_core::RoutesFactory>(jwtKey);
 	
 		m_router = std::make_unique<systelab::rest_api_core::Router>();
-		m_router->addRoute(routesFactory.buildRoute("GET", "/rest/api/yourendpoint" {}, []() { return std::make_unique<YourEndpoint>() }) );
+		m_router->addRoute(routesFactory.buildRoute("GET", "/rest/api/yourendpoint" {},
+		                                            []() { return std::make_unique<YourEndpoint>() }) );
 		// Register more routes here
 	}
 
-	std::unique_ptr<systelab::web_server::Reply> process(const systelab::web_server::Request& request) const override
+	std::unique_ptr<systelab::web_server::Reply>
+	process(const systelab::web_server::Request& request) const override
 	{
 		return m_router->process(request);
 	}
@@ -139,11 +140,15 @@ Thus, when the web service receives a GET HTTP request with "/rest/api/yourendpo
 
 3) Register additional routes to other endpoints:
 
-```
-router->addRoute(routesFactory.buildRoute("POST", "/rest/api/yourendpoint" {}, []() { return std::make_unique<YourPostEndpoint>() });
-router->addRoute(routesFactory.buildRoute("PUT", "/rest/api/yourendpoint" {}, []() { return std::make_unique<YourPutEndpoint>() });
-router->addRoute(routesFactory.buildRoute("DELETE", "/rest/api/yourendpoint" {}, []() { return std::make_unique<YourDeleteEndpoint>() });
-router->addRoute(routesFactory.buildRoute("GET", "/rest/api/anotherendpoint" {}, []() { return std::make_unique<AnotherGetEndpoint>() });
+```cpp
+router->addRoute(routesFactory.buildRoute("POST", "/rest/api/yourendpoint" {},
+                                          []() { return std::make_unique<YourPostEndpoint>() });
+router->addRoute(routesFactory.buildRoute("PUT", "/rest/api/yourendpoint" {},
+                                          []() { return std::make_unique<YourPutEndpoint>() });
+router->addRoute(routesFactory.buildRoute("DELETE", "/rest/api/yourendpoint" {},
+                                          []() { return std::make_unique<YourDeleteEndpoint>() });
+router->addRoute(routesFactory.buildRoute("GET", "/rest/api/anotherendpoint" {},
+                                          []() { return std::make_unique<AnotherGetEndpoint>() });
 ```
 
 ### Routes with parameters
