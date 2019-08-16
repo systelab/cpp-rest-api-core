@@ -12,7 +12,7 @@ This repository implements a C++ framework to facilitate the creation of REST AP
 ## Supported features
 
 * Routing mechanism
-* Authentication through JWT
+* Authorization through JWT
 * User access validation
 * Token expiration validation
 * Custom access validation
@@ -97,7 +97,8 @@ public:
     std::unique_ptr<systelab::web_server::Reply>
     execute(const systelab::rest_api_core::EndpointRequestData&) override
     {
-        // Process given systelab::rest_api_core::EndpointRequestData and generate a systelab::web_server::Reply
+        // Process given systelab::rest_api_core::EndpointRequestData
+	// and generate a systelab::web_server::Reply
         return reply;
     }
 };
@@ -153,13 +154,45 @@ router->addRoute(routesFactory.buildRoute("GET", "/rest/api/anotherendpoint" {},
 
 ### Routes with parameters
 
+Routes with parameters can be registered by using an specific syntax on associated URIs:
+
+```cpp
+// Route with an string parameter named 'id'
+router->addRoute(routesFactory.buildRoute("GET", "/rest/api/yourendpoint/:id" {},
+                                          []() { return std::make_unique<YourGetIdEndpoint>() });
+					  
+// Route with a numeric parameter named 'number'
+router->addRoute(routesFactory.buildRoute("GET", "/rest/api/anotherendpoint/+number" {},
+                                          []() { return std::make_unique<AnotherGetIdEndpoint>() });
+	 
+// Route with multiple parameters
+router->addRoute(routesFactory.buildRoute("GET", "/rest/api/yourendpoint/+id1/:id2" {},
+                                          []() { return std::make_unique<YourGetMultipleParamsEndpoint>() });
+```
+
+When a request matches a registered route with parameters, the associated endpoint is called with a `systelab::rest_api_core::EndpointRequestData` object that contains these parameters properly parsed for easy usage:
+
+```cpp
+std::unique_ptr<systelab::web_server::Reply>
+YourGetMultipleParamsEndpoint::execute(const systelab::rest_api_core::EndpointRequestData& endpointRequestData) override
+{
+    unsigned int id1 = endpointRequestData.getParameters().getNumericParameter("id1");
+    std::string id2 = endpointRequestData.getParameters().getStringParameter("id2");
+    ...
+}
+```
+
+
+### Authorization through JWT
+
 `TBD`
 
-### Add user access validation
+
+### Routes with user role access validation
 
 `TBD`
 
-### Add token expiration validation
+### Routes with token expiration validation
 
 `TBD`
 
