@@ -120,7 +120,7 @@ public:
 	auto routesFactory = std::make_unique<systelab::rest_api_core::RoutesFactory>(jwtKey);
 	
 	m_router = std::make_unique<systelab::rest_api_core::Router>();
-	m_router->addRoute(routesFactory.buildRoute("GET", "/rest/api/yourendpoint" {},
+	m_router->addRoute(routesFactory.buildRoute("GET", "/rest/api/yourendpoint", {},
 		                                    []() { return std::make_unique<YourEndpoint>() }) );
 	// Register more routes here
     }
@@ -142,13 +142,13 @@ private:
 3) Register additional routes to other endpoints:
 
 ```cpp
-router->addRoute(routesFactory.buildRoute("POST", "/rest/api/yourendpoint" {},
+router->addRoute(routesFactory.buildRoute("POST", "/rest/api/yourendpoint", {},
                                           []() { return std::make_unique<YourPostEndpoint>() });
-router->addRoute(routesFactory.buildRoute("PUT", "/rest/api/yourendpoint" {},
+router->addRoute(routesFactory.buildRoute("PUT", "/rest/api/yourendpoint", {},
                                           []() { return std::make_unique<YourPutEndpoint>() });
-router->addRoute(routesFactory.buildRoute("DELETE", "/rest/api/yourendpoint" {},
+router->addRoute(routesFactory.buildRoute("DELETE", "/rest/api/yourendpoint", {},
                                           []() { return std::make_unique<YourDeleteEndpoint>() });
-router->addRoute(routesFactory.buildRoute("GET", "/rest/api/anotherendpoint" {},
+router->addRoute(routesFactory.buildRoute("GET", "/rest/api/anotherendpoint", {},
                                           []() { return std::make_unique<AnotherGetEndpoint>() });
 ```
 
@@ -159,15 +159,15 @@ Routes with parameters can be registered by using an specific syntax on associat
 
 ```cpp
 // Route with an string parameter named 'id'
-router->addRoute(routesFactory.buildRoute("GET", "/rest/api/yourendpoint/:id" {},
+router->addRoute(routesFactory.buildRoute("GET", "/rest/api/yourendpoint/:id", {},
                                           []() { return std::make_unique<YourGetIdEndpoint>() });
 					  
 // Route with a numeric parameter named 'number'
-router->addRoute(routesFactory.buildRoute("GET", "/rest/api/anotherendpoint/+number" {},
+router->addRoute(routesFactory.buildRoute("GET", "/rest/api/anotherendpoint/+number", {},
                                           []() { return std::make_unique<AnotherGetIdEndpoint>() });
 	 
 // Route with multiple parameters
-router->addRoute(routesFactory.buildRoute("GET", "/rest/api/yourendpoint/+id1/:id2" {},
+router->addRoute(routesFactory.buildRoute("GET", "/rest/api/yourendpoint/+id1/:id2", {},
                                           []() { return std::make_unique<YourGetMultipleParamsEndpoint>() });
 ```
 
@@ -186,7 +186,7 @@ YourGetMultipleParamsEndpoint::execute(const systelab::rest_api_core::EndpointRe
 
 ### Authorization through JWT
 
-When working with a [Bearer Authentication](https://swagger.io/docs/specification/authentication/bearer-authentication/) scheme, the library automatically decodes the tokens contained on the `Authorization` header of the HTTP requests. It uses the key provided to the `RoutesFactory` constructor to verify that token signature is correct. Then, claims contained on decoded [JSON Web Tokens](https://jwt.io/) are provided to the matching endpoint as part of the `systelab::rest_api_core::EndpointRequestData` object:
+When working with a [Bearer Authentication](https://swagger.io/docs/specification/authentication/bearer-authentication/) scheme, the library automatically decodes the tokens contained on `Authorization` header of HTTP requests. It uses the key provided on the `RoutesFactory` constructor to verify that token signature is correct. Then, claims contained on decoded [JSON Web Tokens](https://jwt.io/) are provided to the matching endpoint as part of the `systelab::rest_api_core::EndpointRequestData` object:
 
 ```cpp
 std::unique_ptr<systelab::web_server::Reply>
@@ -203,11 +203,61 @@ YourEndpoint::execute(const systelab::rest_api_core::EndpointRequestData& reques
 }
 ```
 
+
 ### Routes with user role access validation
 
-`TBD`
+Routes can be configured to allow access only to users that have a certain role. This can be achieved through *route access validators*, a middleware that is executed after matching a request with a route, but before dispatching it to the endpoint. So, user role validation can be set up as follows:
+
+1) Create a class that implements `IUserRoleService` interface. The method `getUserRoles()` should return the names of the role(s) associated to the user with the given username according to application bussiness logic.
+
+```cpp
+#include "RESTAPICore/RouteAccess/IUserRoleService.h"
+
+class YourUserRoleService : public systelab::rest_api_core::IUserRoleService
+{
+public:
+    YourUserRoleService() = default;
+
+    std::vector<std::string> getUserRoles(const std::string& username) override
+    {
+        ...
+    }
+};
+
+```
+
+2) Add an instance of the implemented user role service into the REST API web service:
+
+```cpp
+class RESTAPIWebService : public systelab::web_server::IWebService
+{
+public:
+   ...
+   
+private:
+    ...
+    YourUserRoleService m_userRoleService;
+};
+```
+
+3) Use the built-in `UserRoleRouteAccessValidator` to register routes that only allow access to users of a certain role:
+
+```cpp
+// Route that only allows access to 'Admin' users
+m_router->addRoute(routesFactory.buildRoute("GET", "/rest/api/yourendpoint",
+                   { [this](){ return std::make_unique<UserRoleRouteAccessValidator>({"Admin"}, m_userRoleService) } },
+		   []() { return std::make_unique<YourEndpoint>() }) );
+
+// Route that allows access to 'Admin' and 'Basic' users
+m_router->addRoute(routesFactory.buildRoute("GET", "/rest/api/anotherendpoint",
+                   { [this](){ return std::make_unique<UserRoleRouteAccessValidator>({"Admin", "Basic"}, m_userRoleService) } },
+		   []() { return std::make_unique<AnotherEndpoint>() }) );
+```
+
 
 ### Routes with token expiration validation
+
+Another built-in 
 
 `TBD`
 
