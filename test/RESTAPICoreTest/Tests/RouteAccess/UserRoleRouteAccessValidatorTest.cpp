@@ -41,10 +41,10 @@ namespace systelab { namespace rest_api_core { namespace unit_test {
 			{ {"SUPER"}, {}, false},
 
 			// No one allowed
-			{ {}, {"SUPER"}, true},
-			{ {}, {"MANAGER"}, true},
-			{ {}, {"BASIC"}, true},
-			{ {}, {"BASIC", "EXTERNAL"}, true},
+			{ {}, {"SUPER"}, false},
+			{ {}, {"MANAGER"}, false},
+			{ {}, {"BASIC"}, false},
+			{ {}, {"BASIC", "EXTERNAL"}, false},
 			{ {}, {"EXTERNAL"}, false},
 			{ {}, {"ANOTHER", "EXTERNAL"}, false},
 			{ {}, {}, false},
