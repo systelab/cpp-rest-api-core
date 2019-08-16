@@ -82,7 +82,71 @@ target_link_libraries(${MY_PROJECT} ${CONAN_LIBS})
 
 ## Usage
 
-### Configure a router
+### Configure basic routing
+
+1) Implement an endpoint by creating a class that inherits ```systelab::rest_api_core::IEndpoint``` interface:
+
+```
+#include "RESTAPICore/Endpoint/IEndpoint.h"
+
+class YourEndpoint : public systelab::rest_api_core::IEndpoint
+{
+public:
+    YourEndpoint() = default;
+
+    std::unique_ptr<systelab::web_server::Reply> execute(const systelab::rest_api_core::EndpointRequestData&) override
+    {
+        // Process given systelab::rest_api_core::EndpointRequestData and
+        // generate a systelab::web_server::Reply
+
+        return reply;
+    }
+};
+```
+
+
+2) Create a web service that sets up a router with a single route registered:
+
+```
+#include "RESTAPICore/Router/Router.h"
+#include "RESTAPICore/Router/RoutesFactory.h"
+
+class RESTAPIWebService : public systelab::web_server::IWebService
+{
+public:
+	RESTAPIWebService()
+	{
+		std::string jwtKey = "HereGoesYourJWTSecretKey";
+		auto routesFactory = std::make_unique<systelab::rest_api_core::RoutesFactory>(jwtKey);
+	
+		m_router = std::make_unique<systelab::rest_api_core::Router>();
+		m_router->addRoute(routesFactory.buildRoute("GET", "/rest/api/yourendpoint" {}, []() { return std::make_unique<YourEndpoint>() }) );
+		// Register more routes here
+	}
+
+	std::unique_ptr<systelab::web_server::Reply> process(const systelab::web_server::Request& request) const override
+	{
+		return m_router->process(request);
+	}
+
+private:
+	std::unique_ptr<systelab::rest_api_core::Router> m_router;
+};
+```
+
+Thus, when the web service receives a GET HTTP request with "/rest/api/yourendpoint" URI, it redirects this request to the ```YourEndpoint```class implemented previously.
+
+
+3) Register additional routes to other endpoints:
+
+```
+router->addRoute(routesFactory.buildRoute("POST", "/rest/api/yourendpoint" {}, []() { return std::make_unique<YourPostEndpoint>() });
+router->addRoute(routesFactory.buildRoute("PUT", "/rest/api/yourendpoint" {}, []() { return std::make_unique<YourPutEndpoint>() });
+router->addRoute(routesFactory.buildRoute("DELETE", "/rest/api/yourendpoint" {}, []() { return std::make_unique<YourDeleteEndpoint>() });
+router->addRoute(routesFactory.buildRoute("GET", "/rest/api/anotherendpoint" {}, []() { return std::make_unique<AnotherGetEndpoint>() });
+```
+
+### Routes with parameters
 
 `TBD`
 
