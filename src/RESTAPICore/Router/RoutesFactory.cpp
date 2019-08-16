@@ -12,13 +12,10 @@
 namespace systelab { namespace rest_api_core {
 
 	RoutesFactory::RoutesFactory(const std::string& jwtKey)
-		:m_jsonAdapter()
-		,m_jwtParserService()
-		,m_authorizationDataBuilder()
+		:m_jsonAdapter(std::make_unique<json::rapidjson::JSONAdapter>())
+		,m_jwtParserService(std::make_unique<jwt::TokenParserService>(*m_jsonAdapter))
+		,m_authorizationDataBuilder(std::make_unique<AuthorizationDataBuilder>(jwtKey, *m_jwtParserService))
 	{
-		m_jsonAdapter = std::make_unique<json::rapidjson::JSONAdapter>();
-		m_jwtParserService = std::make_unique<jwt::TokenParserService>(*m_jsonAdapter);
-		m_authorizationDataBuilder = std::make_unique<AuthorizationDataBuilder>(jwtKey, *m_jwtParserService);
 	}
 
 	RoutesFactory::~RoutesFactory()
