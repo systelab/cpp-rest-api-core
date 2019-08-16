@@ -277,4 +277,18 @@ m_router->addRoute(routesFactory.buildRoute("GET", "/rest/api/yourendpoint",
 
 ### Custom access validation
 
-`TBD`
+This library can be extended by implementing any other kind of route access validation through the `IRouteAccessValidator` interface. The `hasAccess()` method can make use of any data contained on the `EndpointRequestData` argument to determine if the request has access to the route or not and return a boolean accordingly.
+
+```cpp
+#include "RESTAPICore/RouteAccess/IRouteAccessValidator.h"
+
+class MyCustomRouteAccessValidator : public systelab::rest_api_core::IRouteAccessValidator
+{
+    MyCustomRouteAccessValidator(... )  // Inject any object required
+
+    bool hasAccess(EndpointRequestData&) const override
+    {
+        // Use EndpointRequestData or injected objects to return if request has access to the route
+    }
+};
+```
