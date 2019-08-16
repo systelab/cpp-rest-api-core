@@ -19,20 +19,27 @@ namespace systelab { namespace rest_api_core {
 
 	bool UserRoleRouteAccessValidator::hasAccess(EndpointRequestData& endpointRequestData) const
 	{
-		std::string sub = endpointRequestData.getAuthorizationClaims().getClaim(claim::SUBJECT);
-		std::vector<std::string> roles = m_userRoleService.getUserRoles(sub);
-		for (auto role : roles)
+		try
 		{
-			for (auto allowedRole : m_allowedRoles)
+			std::string sub = endpointRequestData.getAuthorizationClaims().getClaim(claim::SUBJECT);
+			std::vector<std::string> roles = m_userRoleService.getUserRoles(sub);
+			for (auto role : roles)
 			{
-				if (role == allowedRole)
+				for (auto allowedRole : m_allowedRoles)
 				{
-					return true;
+					if (role == allowedRole)
+					{
+						return true;
+					}
 				}
 			}
-		}
 
-		return false;
+			return false;
+		}
+		catch (std::exception&)
+		{
+			return false;
+		}
 	}
 
 }}
