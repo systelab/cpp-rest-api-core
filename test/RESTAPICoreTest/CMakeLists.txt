@@ -11,7 +11,7 @@ set(REST_API_CORE_TEST_PROJECT RESTAPICoreTest)
 file(GLOB_RECURSE REST_API_CORE_TEST_PROJECT_SRC "*.cpp")
 file(GLOB_RECURSE REST_API_CORE_TEST_PROJECT_HDR "*.h")
 add_executable(${REST_API_CORE_TEST_PROJECT} ${REST_API_CORE_TEST_PROJECT_SRC} ${REST_API_CORE_TEST_PROJECT_HDR})
-target_link_libraries(${REST_API_CORE_TEST_PROJECT} gmock_main RESTAPICore RESTAPICoreTestUtilities WebServerAdapterTestUtilities)
+target_link_libraries(${REST_API_CORE_TEST_PROJECT} gmock_main RESTAPICore RESTAPICoreTestUtilities WebServerAdapterTestUtilities JSONAdapterTestUtilities)
 
 #Configure source groups
 foreach(FILE ${REST_API_CORE_TEST_PROJECT_SRC} ${REST_API_CORE_TEST_PROJECT_HDR}) 
