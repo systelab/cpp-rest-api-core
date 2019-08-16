@@ -11,7 +11,7 @@ set(REST_API_CORE RESTAPICore)
 file(GLOB_RECURSE REST_API_CORE_SRC "*.cpp")
 file(GLOB_RECURSE REST_API_CORE_HDR "*.h")
 add_library(${REST_API_CORE} STATIC ${REST_API_CORE_SRC} ${REST_API_CORE_HDR})
-target_link_libraries(${REST_API_CORE} JWTUtils)
+target_link_libraries(${REST_API_CORE} JWTUtils::JWTUtils)
 
 #Configure source groups
 foreach(FILE ${REST_API_CORE_SRC} ${REST_API_CORE_HDR}) 
