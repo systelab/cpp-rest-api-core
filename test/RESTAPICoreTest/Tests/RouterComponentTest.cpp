@@ -7,7 +7,7 @@
 #include "RESTAPICore/Router/Router.h"
 #include "RESTAPICore/Router/RoutesFactory.h"
 
-#include "RapidjsonAdapter/JSONAdapter.h"
+#include "RapidJSONAdapter/JSONAdapter.h"
 
 #include "JWTUtils/Services/TokenBuilderService.h"
 
