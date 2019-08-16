@@ -1,4 +1,6 @@
 #include <iostream>
+#include <memory>
+#include <string>
 #include <stdexcept>
 
 #include "RESTAPICore/Endpoint/IEndpoint.h"
