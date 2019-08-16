@@ -243,6 +243,8 @@ private:
 3) Use the built-in `UserRoleRouteAccessValidator` to register routes that only allow access to users of a certain role:
 
 ```cpp
+#include "RESTAPICore/RouteAccess/UserRoleRouteAccessValidator.h"
+
 // Route that only allows access to 'Admin' users
 m_router->addRoute(routesFactory.buildRoute("GET", "/rest/api/yourendpoint",
                    { [this](){ return std::make_unique<UserRoleRouteAccessValidator>({"Admin"}, m_userRoleService) } },
@@ -254,12 +256,24 @@ m_router->addRoute(routesFactory.buildRoute("GET", "/rest/api/anotherendpoint",
 		   []() { return std::make_unique<AnotherEndpoint>() }) );
 ```
 
+> When the web service receives an HTTP request that matches any of these routes, before redirecting the request to the endpoint, it will check if the request has an authorization claim for the subject ("sub"). If so, this claim will be used to retrieve the associated user roles and then, these roles will be compared against the allowed ones for the route. If user is allowed, then the request will be dispatched to the endpoint. Otherwise, a forbidden reply will be returned.
+
 
 ### Routes with token expiration validation
 
-Another built-in 
+Another built-in route access validator (class `TokenExpirationAccessValidator`) can be used to check if the token contained on the `Authorization` header of the requests has expired or not. This verification is based on the "Issued at" (iat) authorization claim and the current time. Thus, when current time is greater than iat plus a configured expiration time (in seconds), a forbidden reply will be returned.  
 
-`TBD`
+```cpp
+#include "RESTAPICore/RouteAccess/TokenExpirationAccessValidator.h"
+
+// Route that does not allow using tokens generated more than 10 min (600 seconds) ago
+m_router->addRoute(routesFactory.buildRoute("GET", "/rest/api/yourendpoint",
+                   { [this](){ return std::make_unique<TokenExpirationAccessValidator>(600, m_epochTimeService) } },
+		   []() { return std::make_unique<YourEndpoint>() }) );
+```
+
+> The `m_epochTimeService` member is an instance of the `EpochTimeService` class, which provides a method to query the current time of the system.
+
 
 ### Custom access validation
 
