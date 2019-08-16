@@ -217,12 +217,109 @@ namespace systelab { namespace rest_api_core { namespace unit_test {
 	};
 
 
-	TEST_F(RouterComponentTest, testProcessGETForRESTAPIUsersWithAdminRoleReturnsReplyStatusOK)
+	// Happy path requests
+	TEST_F(RouterComponentTest, testProcessGETForRESTAPIUsersWithBasicRoleReturnsReplyStatusOK)
 	{
-		auto reply = m_router->process(buildRequest("GET", "/rest/api/users", m_adminUsername));
+		auto reply = m_router->process(buildRequest("GET", "/rest/api/users", m_basicUsername));
 		ASSERT_TRUE(reply != NULL);
-		ASSERT_EQ(reply->getStatus(), web_server::Reply::OK);
-		ASSERT_TRUE(compareJSONs(buildExpectedContentJSON("GET", "/rest/api/users"), reply->getContent(), m_jsonAdapter));
+		EXPECT_EQ(reply->getStatus(), web_server::Reply::OK);
+		EXPECT_TRUE(compareJSONs(buildExpectedContentJSON("GET", "/rest/api/users"), reply->getContent(), m_jsonAdapter));
 	}
+
+	TEST_F(RouterComponentTest, testProcessGETForRESTAPIUsers123WithBasicRoleReturnsReplyStatusOK)
+	{
+		auto reply = m_router->process(buildRequest("GET", "/rest/api/users/123", m_basicUsername));
+		ASSERT_TRUE(reply != NULL);
+		EXPECT_EQ(reply->getStatus(), web_server::Reply::OK);
+		EXPECT_TRUE(compareJSONs(buildExpectedContentJSON("GET", "/rest/api/users/+id"), reply->getContent(), m_jsonAdapter));
+	}
+
+	TEST_F(RouterComponentTest, testProcessPOSTForRESTAPIUsersWithAdminRoleReturnsReplyStatusOK)
+	{
+		auto reply = m_router->process(buildRequest("POST", "/rest/api/users/", m_adminUsername));
+		ASSERT_TRUE(reply != NULL);
+		EXPECT_EQ(reply->getStatus(), web_server::Reply::OK);
+		EXPECT_TRUE(compareJSONs(buildExpectedContentJSON("POST", "/rest/api/users"), reply->getContent(), m_jsonAdapter));
+	}
+
+	TEST_F(RouterComponentTest, testProcessPUTForRESTAPIUsers456WithAdminRoleReturnsReplyStatusOK)
+	{
+		auto reply = m_router->process(buildRequest("PUT", "/rest/api/users/456", m_adminUsername));
+		ASSERT_TRUE(reply != NULL);
+		EXPECT_EQ(reply->getStatus(), web_server::Reply::OK);
+		EXPECT_TRUE(compareJSONs(buildExpectedContentJSON("PUT", "/rest/api/users/+id"), reply->getContent(), m_jsonAdapter));
+	}
+
+	TEST_F(RouterComponentTest, testProcessDELETEForRESTAPIUsers789WithAdminRoleReturnsReplyStatusOK)
+	{
+		auto reply = m_router->process(buildRequest("DELETE", "/rest/api/users/789", m_adminUsername));
+		ASSERT_TRUE(reply != NULL);
+		EXPECT_EQ(reply->getStatus(), web_server::Reply::OK);
+		EXPECT_TRUE(compareJSONs(buildExpectedContentJSON("DELETE", "/rest/api/users/+id"), reply->getContent(), m_jsonAdapter));
+	}
+
+	TEST_F(RouterComponentTest, testProcessPOSTForRESTAPIUsersLoginWithAnonymousRequestReturnsReplyStatusOK)
+	{
+		auto reply = m_router->process(buildRequest("POST", "/rest/api/users/login"));
+		ASSERT_TRUE(reply != NULL);
+		EXPECT_EQ(reply->getStatus(), web_server::Reply::OK);
+		EXPECT_TRUE(compareJSONs(buildExpectedContentJSON("POST", "/rest/api/users/login"), reply->getContent(), m_jsonAdapter));
+	}
+
+
+	// Requests without access due to user role
+	TEST_F(RouterComponentTest, testProcessDELETEForRESTAPIUsers789WithAnonymousRequestReturnsReplyStatusForbidden)
+	{
+		auto reply = m_router->process(buildRequest("DELETE", "/rest/api/users/789"));
+		ASSERT_TRUE(reply != NULL);
+		EXPECT_EQ(reply->getStatus(), web_server::Reply::FORBIDDEN);
+		EXPECT_TRUE(compareJSONs("{}", reply->getContent(), m_jsonAdapter));
+	}
+
+	TEST_F(RouterComponentTest, testProcessDELETEForRESTAPIUsers789WithBasicRoleReturnsReplyStatusForbidden)
+	{
+		auto reply = m_router->process(buildRequest("DELETE", "/rest/api/users/789", m_basicUsername));
+		ASSERT_TRUE(reply != NULL);
+		EXPECT_EQ(reply->getStatus(), web_server::Reply::FORBIDDEN);
+		EXPECT_TRUE(compareJSONs("{}", reply->getContent(), m_jsonAdapter));
+	}
+
+	TEST_F(RouterComponentTest, testProcessGETForRESTAPIUsers789WithAnonymousRequestReturnsReplyStatusForbidden)
+	{
+		auto reply = m_router->process(buildRequest("GET", "/rest/api/users/789"));
+		ASSERT_TRUE(reply != NULL);
+		EXPECT_EQ(reply->getStatus(), web_server::Reply::FORBIDDEN);
+		EXPECT_TRUE(compareJSONs("{}", reply->getContent(), m_jsonAdapter));
+	}
+
+
+	// Requests without access due to expired token
+	TEST_F(RouterComponentTest, testProcessGETForRESTAPIUsersWithBasicRoleButExpiredTokenReturnsReplyStatusForbidden)
+	{
+		auto request = buildRequest("GET", "/rest/api/users", m_basicUsername);
+		m_epochTimeService.addSeconds(601);
+		auto reply = m_router->process(request);
+		ASSERT_TRUE(reply != NULL);
+		EXPECT_EQ(reply->getStatus(), web_server::Reply::FORBIDDEN);
+		EXPECT_TRUE(compareJSONs("{}", reply->getContent(), m_jsonAdapter));
+	}
+
+
+	// Requests for not existing routes
+	TEST_F(RouterComponentTest, testProcessGETForRESTAPIUsersIdReturnsNullReply)
+	{
+		ASSERT_TRUE(m_router->process(buildRequest("GET", "/rest/api/users/+id")) == NULL);
+	}
+
+	TEST_F(RouterComponentTest, testProcessGETForRESTAPIUsersSomethingReturnsNullReply)
+	{
+		ASSERT_TRUE(m_router->process(buildRequest("GET", "/rest/api/users/something")) == NULL);
+	}
+
+	TEST_F(RouterComponentTest, testProcessPUTForRESTAPIUsersLoginReturnsNullReply)
+	{
+		ASSERT_TRUE(m_router->process(buildRequest("PUT", "/rest/api/users/login")) == NULL);
+	}
+
 
 }}}
