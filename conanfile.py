@@ -12,7 +12,7 @@ class RESTAPICoreConan(ConanFile):
     settings = "os", "compiler", "build_type", "arch"
 
     def requirements(self):
-        self.requires("JWTUtils/1.0.0@systelab/stable")
+        self.requires("JWTUtils/1.0.2@systelab/stable")
         self.requires("WebServerAdapter/1.0.1@systelab/stable")
 
     def imports(self):
