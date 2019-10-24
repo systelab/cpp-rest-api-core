@@ -2,6 +2,7 @@
 #include "RESTAPICore/Endpoint/EndpointRequestData.h"
 
 #include "TestUtilitiesInterface/EntityComparator.h"
+#include "TestUtilitiesInterface/EntityComparatorMacros.h"
 
 
 using namespace testing;
