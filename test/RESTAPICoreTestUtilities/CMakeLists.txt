@@ -3,12 +3,15 @@ cmake_minimum_required(VERSION 3.2)
 # Add project folder into includes
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
+# Find external dependencides
+find_package(gtest)
+
 # Configure test project
 set(REST_API_CORE_TEST_UTILITIES_PROJECT RESTAPICoreTestUtilities)
 file(GLOB_RECURSE REST_API_CORE_TEST_UTILITIES_PROJECT_SRC "*.cpp")
 file(GLOB_RECURSE REST_API_CORE_TEST_UTILITIES_PROJECT_HDR "*.h")
 add_library(${REST_API_CORE_TEST_UTILITIES_PROJECT} STATIC ${REST_API_CORE_TEST_UTILITIES_PROJECT_SRC} ${REST_API_CORE_TEST_UTILITIES_PROJECT_HDR})
-target_link_libraries(${REST_API_CORE_TEST_UTILITIES_PROJECT} RESTAPICore gmock_main)
+target_link_libraries(${REST_API_CORE_TEST_UTILITIES_PROJECT} RESTAPICore gtest::gtest)
 
 #Configure source groups
 foreach(FILE ${REST_API_CORE_TEST_UTILITIES_PROJECT_SRC} ${REST_API_CORE_TEST_UTILITIES_PROJECT_HDR}) 
