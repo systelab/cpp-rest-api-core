@@ -10,10 +10,22 @@ class RESTAPICoreConan(ConanFile):
     license = "MIT"
     generators = "cmake_find_package"
     settings = "os", "compiler", "build_type", "arch"
+    options = {"gtest": ["1.7.0", "1.8.1"], "OpenSSL": ["1.0.2n"]}
+    default_options = {"gtest":"1.8.1", "OpenSSL":"1.0.2n"}
+
+    def configure(self):
+        self.options["JWTUtils"].gtest = self.options.gtest
+        self.options["JWTUtils"].OpenSSL = self.options.OpenSSL
+
+    def build_requirements(self):
+        if self.options.gtest == "1.7.0":
+            self.build_requires("gtest/1.7.0@systelab/stable")
+        else:
+            self.build_requires("gtest/1.8.1@bincrafters/stable")
 
     def requirements(self):
-        self.requires("JWTUtils/1.0.2@systelab/stable")
-        self.requires("WebServerAdapter/1.0.1@systelab/stable")
+        self.requires("JWTUtils/1.0.3@systelab/stable")
+        self.requires("WebServerAdapterInterface/1.0.2@systelab/stable")
 
     def imports(self):
         self.copy("*.dll", dst=("bin/%s" % self.settings.build_type), src="bin")
