@@ -24,8 +24,8 @@ class RESTAPICoreConan(ConanFile):
             self.build_requires("gtest/1.8.1@bincrafters/stable")
 
     def requirements(self):
-        self.requires("JWTUtils/1.0.3@systelab/stable")
         self.requires("WebServerAdapterInterface/1.0.2@systelab/stable")
+        self.requires("JWTUtils/1.0.3@systelab/stable")
 
     def imports(self):
         self.copy("*.dll", dst=("bin/%s" % self.settings.build_type), src="bin")
