@@ -8,12 +8,23 @@ init:
         Update-AppveyorBuild -Version "$($env:APPVEYOR_REPO_TAG_NAME.TrimStart("v"))"
       }
 
-platform:
-  - x64
-
 configuration:
   - Debug
   - Release
+
+environment:
+  matrix:
+  - arch: x86
+    platform: Win32
+    visual_studio: Visual Studio 15 2017
+    gtest: 1.7.0
+    OpenSSL: 1.0.2n
+
+  - arch: x86_64
+    platform: x64
+    visual_studio: Visual Studio 15 2017 Win64
+    gtest: 1.8.1
+    OpenSSL: 1.0.2n
 
 install:
   - set PATH=%PATH%;%PYTHON%/Scripts/
@@ -25,15 +36,17 @@ install:
 before_build:
   - md build
   - cd build
-  - conan install .. -s build_type=%CONFIGURATION%
-  - cmake .. -G "Visual Studio 15 2017 Win64"
-
+  - conan install .. -s build_type=%CONFIGURATION% -s compiler.toolset=v141 -s arch=%ARCH% -o gtest=%GTEST% -o OpenSSL=%OPENSSL%
+  - cmake .. -G "%VISUAL_STUDIO%"
+  
 build:
   project: $(APPVEYOR_BUILD_FOLDER)\build\RESTAPICore.sln
 
 after_build:
-  - conan export-pkg ../conanfile.py RESTAPICore/%APPVEYOR_BUILD_VERSION%@systelab/stable -s build_type=%CONFIGURATION%
-  - conan test ../test_package/conanfile.py RESTAPICore/%APPVEYOR_BUILD_VERSION%@systelab/stable -s build_type=%CONFIGURATION%
+  - conan export-pkg ../conanfile.py RESTAPICore/%APPVEYOR_BUILD_VERSION%@systelab/stable -s build_type=%CONFIGURATION% -s compiler.toolset=v141 -s arch=%ARCH% -o gtest=%GTEST% -o OpenSSL=%OPENSSL%
+  - conan test ../test_package/conanfile.py RESTAPICore/%APPVEYOR_BUILD_VERSION%@systelab/stable -s build_type=%CONFIGURATION% -s compiler.toolset=v141 -s arch=%ARCH% -o gtest=%GTEST% -o OpenSSL=%OPENSSL%
+  - conan export-pkg ../test/RESTAPICoreTestUtilities/conanfile.py RESTAPICoreTestUtilities/%APPVEYOR_BUILD_VERSION%@systelab/stable -s build_type=%CONFIGURATION% -s compiler.toolset=v141 -s arch=%ARCH% -o gtest=%GTEST% -o OpenSSL=%OPENSSL%
+  - conan test ../test/RESTAPICoreTestUtilities/test_package/conanfile.py RESTAPICoreTestUtilities/%APPVEYOR_BUILD_VERSION%@systelab/stable -s build_type=%CONFIGURATION% -s compiler.toolset=v141 -s arch=%ARCH% -o gtest=%GTEST% -o OpenSSL=%OPENSSL%
 
 test_script:
   - ps: cd bin
@@ -46,11 +59,14 @@ after_test:
 artifacts:
   - path: 'build\lib\%CONFIGURATION%\RESTAPICore.lib'
     name: RESTAPICore.lib
+  - path: 'build\lib\%CONFIGURATION%\RESTAPICoreTestUtilities.lib'
+    name: RESTAPICoreTestUtilities.lib
 
 deploy_script:
   - ps: >- 
       if($env:appveyor_repo_tag -eq 'True') {
         conan upload RESTAPICore/$env:appveyor_build_version@systelab/stable --all -r systelab-bintray --force
+        conan upload RESTAPICoreTestUtilities/$env:appveyor_build_version@systelab/stable --all -r systelab-bintray --force
       } else {
         echo "Not uploading because this is not a tag build"
       }
