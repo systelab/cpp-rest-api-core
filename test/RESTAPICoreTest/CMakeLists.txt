@@ -3,6 +3,11 @@ cmake_minimum_required(VERSION 3.2)
 # Enable testing module
 enable_testing()
 
+# Find external dependencides
+find_package(gtest)
+find_package(WebServerAdapterTestUtilities)
+find_package(JSONAdapterTestUtilities)
+
 # Add project folder into includes
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -11,7 +16,9 @@ set(REST_API_CORE_TEST_PROJECT RESTAPICoreTest)
 file(GLOB_RECURSE REST_API_CORE_TEST_PROJECT_SRC "*.cpp")
 file(GLOB_RECURSE REST_API_CORE_TEST_PROJECT_HDR "*.h")
 add_executable(${REST_API_CORE_TEST_PROJECT} ${REST_API_CORE_TEST_PROJECT_SRC} ${REST_API_CORE_TEST_PROJECT_HDR})
-target_link_libraries(${REST_API_CORE_TEST_PROJECT} gmock_main RESTAPICore RESTAPICoreTestUtilities WebServerAdapterTestUtilities JSONAdapterTestUtilities)
+target_link_libraries(${REST_API_CORE_TEST_PROJECT} RESTAPICore RESTAPICoreTestUtilities gtest::gtest
+					  WebServerAdapterTestUtilities::WebServerAdapterTestUtilities
+					  JSONAdapterTestUtilities::JSONAdapterTestUtilities)
 
 #Configure source groups
 foreach(FILE ${REST_API_CORE_TEST_PROJECT_SRC} ${REST_API_CORE_TEST_PROJECT_HDR}) 
