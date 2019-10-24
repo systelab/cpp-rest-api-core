@@ -5,13 +5,14 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 # Find external dependencides
 find_package(gtest)
+find_package(TestUtilitiesInterface)
 
 # Configure test project
 set(REST_API_CORE_TEST_UTILITIES_PROJECT RESTAPICoreTestUtilities)
 file(GLOB_RECURSE REST_API_CORE_TEST_UTILITIES_PROJECT_SRC "*.cpp")
 file(GLOB_RECURSE REST_API_CORE_TEST_UTILITIES_PROJECT_HDR "*.h")
 add_library(${REST_API_CORE_TEST_UTILITIES_PROJECT} STATIC ${REST_API_CORE_TEST_UTILITIES_PROJECT_SRC} ${REST_API_CORE_TEST_UTILITIES_PROJECT_HDR})
-target_link_libraries(${REST_API_CORE_TEST_UTILITIES_PROJECT} RESTAPICore gtest::gtest)
+target_link_libraries(${REST_API_CORE_TEST_UTILITIES_PROJECT} RESTAPICore gtest::gtest TestUtilitiesInterface::TestUtilitiesInterface)
 
 #Configure source groups
 foreach(FILE ${REST_API_CORE_TEST_UTILITIES_PROJECT_SRC} ${REST_API_CORE_TEST_UTILITIES_PROJECT_HDR}) 
