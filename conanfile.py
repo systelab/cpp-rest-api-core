@@ -14,6 +14,8 @@ class RESTAPICoreConan(ConanFile):
     default_options = {"gtest":"1.8.1", "OpenSSL":"1.0.2n"}
 
     def configure(self):
+        self.options["WebServerAdapterTestUtilities"].gtest = self.options.gtest
+		self.options["JSONAdapterTestUtilities"].gtest = self.options.gtest
         self.options["JWTUtils"].gtest = self.options.gtest
         self.options["JWTUtils"].OpenSSL = self.options.OpenSSL
 
