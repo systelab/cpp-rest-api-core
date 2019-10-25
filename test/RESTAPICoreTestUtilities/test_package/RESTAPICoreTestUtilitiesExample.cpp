@@ -1,8 +1,12 @@
 #define _SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING  1
 
+// STL
+#include <iostream>
+#include <memory>
+
+// GTEST
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
-#include <iostream>
 
 #include "RESTAPICoreTestUtilities/Mocks/Endpoint/MockEndpoint.h"
 
