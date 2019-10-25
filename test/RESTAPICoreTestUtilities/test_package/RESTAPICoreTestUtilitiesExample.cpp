@@ -4,7 +4,7 @@
 #include <gmock/gmock.h>
 #include <iostream>
 
-#include "RESAPICoreTestUtilities/Mocks/Endpoint/MockEndpoint.h"
+#include "RESTAPICoreTestUtilities/Mocks/Endpoint/MockEndpoint.h"
 
 
 int main(int argc, char *argv[])
