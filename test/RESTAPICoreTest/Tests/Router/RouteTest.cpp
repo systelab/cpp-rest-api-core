@@ -117,7 +117,7 @@ namespace systelab { namespace rest_api_core { namespace unit_test {
 	TEST_F(RouteTest, testPublicRouteReturnsExpectedReplyWhenMatchingRequest)
 	{
 		EndpointRequestData expectedEndpointRequestData;
-		EXPECT_CALL(m_endpoint, executeProxy(isEqualTo(expectedEndpointRequestData)));
+		EXPECT_CALL(m_endpoint, executeProxy(isEqTo(expectedEndpointRequestData)));
 
 		auto route = m_routesFactory->buildRoute("POST", "/rest/api/test", {}, m_endpointFactoryMethod);
 		auto request = buildSimpleRequest("POST", "/rest/api/test");
@@ -178,7 +178,7 @@ namespace systelab { namespace rest_api_core { namespace unit_test {
 	{
 		EndpointRequestData expectedEndpointRequestData;
 		expectedEndpointRequestData.setParameters({ {}, { {"id", 23} } });
-		EXPECT_CALL(m_endpoint, executeProxy(isEqualTo(expectedEndpointRequestData)));
+		EXPECT_CALL(m_endpoint, executeProxy(isEqTo(expectedEndpointRequestData)));
 
 		auto route = m_routesFactory->buildRoute("POST", "/rest/api/resource/+id", {}, m_endpointFactoryMethod);
 		auto request = buildSimpleRequest("POST", "/rest/api/resource/23");
@@ -193,7 +193,7 @@ namespace systelab { namespace rest_api_core { namespace unit_test {
 	{
 		EndpointRequestData expectedEndpointRequestData;
 		expectedEndpointRequestData.setParameters({ {}, { {"id", 54}, {"id2", 23} } });
-		EXPECT_CALL(m_endpoint, executeProxy(isEqualTo(expectedEndpointRequestData)));
+		EXPECT_CALL(m_endpoint, executeProxy(isEqTo(expectedEndpointRequestData)));
 
 		auto route = m_routesFactory->buildRoute("POST", "/rest/api/resource/+id/subresource/+id2", {}, m_endpointFactoryMethod);
 		auto request = buildSimpleRequest("POST", "/rest/api/resource/54/subresource/23");
@@ -208,7 +208,7 @@ namespace systelab { namespace rest_api_core { namespace unit_test {
 	{
 		EndpointRequestData expectedEndpointRequestData;
 		expectedEndpointRequestData.setParameters({ { {"uuid", "C9C70401-807C-4B57-BE62-FC2723D4C43B"} }, {} });
-		EXPECT_CALL(m_endpoint, executeProxy(isEqualTo(expectedEndpointRequestData)));
+		EXPECT_CALL(m_endpoint, executeProxy(isEqTo(expectedEndpointRequestData)));
 
 		auto route = m_routesFactory->buildRoute("POST", "/rest/api/resource/:uuid", {}, m_endpointFactoryMethod);
 		auto request = buildSimpleRequest("POST", "/rest/api/resource/C9C70401-807C-4B57-BE62-FC2723D4C43B");
@@ -223,7 +223,7 @@ namespace systelab { namespace rest_api_core { namespace unit_test {
 	{
 		EndpointRequestData expectedEndpointRequestData;
 		expectedEndpointRequestData.setParameters({ { {"start", "peter"}, {"end", "joe"} }, {} });
-		EXPECT_CALL(m_endpoint, executeProxy(isEqualTo(expectedEndpointRequestData)));
+		EXPECT_CALL(m_endpoint, executeProxy(isEqTo(expectedEndpointRequestData)));
 
 		auto route = m_routesFactory->buildRoute("GET", "/rest/api/:start/:end", {}, m_endpointFactoryMethod);
 		auto request = buildSimpleRequest("GET", "/rest/api/peter/joe");
@@ -238,7 +238,7 @@ namespace systelab { namespace rest_api_core { namespace unit_test {
 	{
 		EndpointRequestData expectedEndpointRequestData;
 		expectedEndpointRequestData.setParameters({ { {"param1", "one"}, {"param3", "three"} }, { {"param2", 2} } });
-		EXPECT_CALL(m_endpoint, executeProxy(isEqualTo(expectedEndpointRequestData)));
+		EXPECT_CALL(m_endpoint, executeProxy(isEqTo(expectedEndpointRequestData)));
 
 		auto route = m_routesFactory->buildRoute("GET", "/rest/api/:param1/item/+param2/item/:param3", {}, m_endpointFactoryMethod);
 		auto request = buildSimpleRequest("GET", "/rest/api/one/item/2/item/three");
@@ -276,7 +276,7 @@ namespace systelab { namespace rest_api_core { namespace unit_test {
 
 		EndpointRequestData expectedEndpointRequestData;
 		expectedEndpointRequestData.setHeaders(requestHeaders);
-		EXPECT_CALL(m_endpoint, executeProxy(isEqualTo(expectedEndpointRequestData)));
+		EXPECT_CALL(m_endpoint, executeProxy(isEqTo(expectedEndpointRequestData)));
 
 		auto route = m_routesFactory->buildRoute("GET", "/rest/api/test", {}, m_endpointFactoryMethod);
 		auto request = buildRequestWithHeaders("GET", "/rest/api/test", requestHeaders);
@@ -291,7 +291,7 @@ namespace systelab { namespace rest_api_core { namespace unit_test {
 
 		EndpointRequestData expectedEndpointRequestData;
 		expectedEndpointRequestData.setHeaders(requestHeaders);
-		EXPECT_CALL(m_endpoint, executeProxy(isEqualTo(expectedEndpointRequestData)));
+		EXPECT_CALL(m_endpoint, executeProxy(isEqTo(expectedEndpointRequestData)));
 
 		auto route = m_routesFactory->buildRoute("GET", "/rest/api/test", {}, m_endpointFactoryMethod);
 		auto request = buildRequestWithHeaders("GET", "/rest/api/test", requestHeaders);
@@ -306,7 +306,7 @@ namespace systelab { namespace rest_api_core { namespace unit_test {
 
 		EndpointRequestData expectedEndpointRequestData;
 		expectedEndpointRequestData.setHeaders(requestHeaders);
-		EXPECT_CALL(m_endpoint, executeProxy(isEqualTo(expectedEndpointRequestData)));
+		EXPECT_CALL(m_endpoint, executeProxy(isEqTo(expectedEndpointRequestData)));
 
 		auto route = m_routesFactory->buildRoute("GET", "/rest/api/test", {}, m_endpointFactoryMethod);
 		auto request = buildRequestWithHeaders("GET", "/rest/api/test", requestHeaders);
@@ -321,7 +321,7 @@ namespace systelab { namespace rest_api_core { namespace unit_test {
 
 		EndpointRequestData expectedEndpointRequestData;
 		expectedEndpointRequestData.setHeaders(requestHeaders);
-		EXPECT_CALL(m_endpoint, executeProxy(isEqualTo(expectedEndpointRequestData)));
+		EXPECT_CALL(m_endpoint, executeProxy(isEqTo(expectedEndpointRequestData)));
 
 		auto route = m_routesFactory->buildRoute("GET", "/rest/api/test", {}, m_endpointFactoryMethod);
 		auto request = buildRequestWithHeaders("GET", "/rest/api/test", requestHeaders);
@@ -341,7 +341,7 @@ namespace systelab { namespace rest_api_core { namespace unit_test {
 		EndpointRequestData expectedEndpointRequestData;
 		expectedEndpointRequestData.setHeaders(requestHeaders);
 		expectedEndpointRequestData.setAuthorizationClaims(expectedAuthorizationClaims);
-		EXPECT_CALL(m_endpoint, executeProxy(isEqualTo(expectedEndpointRequestData)));
+		EXPECT_CALL(m_endpoint, executeProxy(isEqTo(expectedEndpointRequestData)));
 
 		auto route = m_routesFactory->buildRoute("GET", "/rest/api/test", {}, m_endpointFactoryMethod);
 		auto request = buildRequestWithHeaders("GET", "/rest/api/test", requestHeaders);
@@ -358,7 +358,7 @@ namespace systelab { namespace rest_api_core { namespace unit_test {
 
 		EndpointRequestData expectedEndpointRequestData;
 		expectedEndpointRequestData.setQueryStrings(requestQueryStrings);
-		EXPECT_CALL(m_endpoint, executeProxy(isEqualTo(expectedEndpointRequestData)));
+		EXPECT_CALL(m_endpoint, executeProxy(isEqTo(expectedEndpointRequestData)));
 
 		auto request = buildSimpleRequest("GET", "/rest/api/test");
 		for (auto queryStringItem : requestQueryStrings.getItemsMap())
@@ -378,7 +378,7 @@ namespace systelab { namespace rest_api_core { namespace unit_test {
 
 		EndpointRequestData expectedEndpointRequestData;
 		expectedEndpointRequestData.setContent(requestContent);
-		EXPECT_CALL(m_endpoint, executeProxy(isEqualTo(expectedEndpointRequestData)));
+		EXPECT_CALL(m_endpoint, executeProxy(isEqTo(expectedEndpointRequestData)));
 
 		auto request = buildSimpleRequest("GET", "/rest/api/test");
 		request->setContent(requestContent);
@@ -405,7 +405,7 @@ namespace systelab { namespace rest_api_core { namespace unit_test {
 	TEST_F(RouteTest, testRouteWithSingleAccessValidatorThatPassesCallsEndpoint)
 	{
 		EndpointRequestData expectedEndpointRequestData;
-		EXPECT_CALL(m_endpoint, executeProxy(isEqualTo(expectedEndpointRequestData)));
+		EXPECT_CALL(m_endpoint, executeProxy(isEqTo(expectedEndpointRequestData)));
 
 		auto route = m_routesFactory->buildRoute("GET", "/rest/api/test", { m_passAccessValidatorFactoryMethod }, m_endpointFactoryMethod);
 		auto request = buildSimpleRequest("GET", "/rest/api/test");
@@ -434,7 +434,7 @@ namespace systelab { namespace rest_api_core { namespace unit_test {
 	TEST_F(RouteTest, testRouteWithMultipleAccessValidatorsAndAllPassCallsEndpoint)
 	{
 		EndpointRequestData expectedEndpointRequestData;
-		EXPECT_CALL(m_endpoint, executeProxy(isEqualTo(expectedEndpointRequestData)));
+		EXPECT_CALL(m_endpoint, executeProxy(isEqTo(expectedEndpointRequestData)));
 
 		auto route = m_routesFactory->buildRoute("GET", "/rest/api/test",
 												 { m_passAccessValidatorFactoryMethod, m_passAccessValidatorFactoryMethod,
