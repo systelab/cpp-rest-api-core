@@ -22,7 +22,7 @@ class RESTAPICoreConan(ConanFile):
     def build_requirements(self):
         self.build_requires("TestUtilitiesInterface/1.0.3@systelab/stable")
         self.build_requires("WebServerAdapterTestUtilities/1.0.2@systelab/stable")
-        self.build_requires("JSONAdapterTestUtilities/1.0.3@systelab/stable")
+        self.build_requires("JSONAdapterTestUtilities/1.0.4@systelab/stable")
         if self.options.gtest == "1.7.0":
             self.build_requires("gtest/1.7.0@systelab/stable")
         else:
@@ -30,7 +30,7 @@ class RESTAPICoreConan(ConanFile):
 
     def requirements(self):
         self.requires("WebServerAdapterInterface/1.0.2@systelab/stable")
-        self.requires("JWTUtils/1.0.3@systelab/stable")
+        self.requires("JWTUtils/1.0.4@systelab/stable")
 
     def imports(self):
         self.copy("*.dll", dst=("bin/%s" % self.settings.build_type), src="bin")
