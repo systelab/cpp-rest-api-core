@@ -1,4 +1,4 @@
-from conans import ConanFile, tools
+from conans import ConanFile, CMake, tools
 
 class RESTAPICoreConan(ConanFile):
     name = "RESTAPICore"
@@ -12,12 +12,17 @@ class RESTAPICoreConan(ConanFile):
     settings = "os", "compiler", "build_type", "arch"
     options = {"gtest": ["1.7.0", "1.8.1"], "OpenSSL": ["1.0.2n"]}
     default_options = {"gtest":"1.8.1", "OpenSSL":"1.0.2n"}
+    exports_sources = "*"
 
     def configure(self):
         self.options["WebServerAdapterTestUtilities"].gtest = self.options.gtest
         self.options["JSONAdapterTestUtilities"].gtest = self.options.gtest
         self.options["JWTUtils"].gtest = self.options.gtest
         self.options["JWTUtils"].OpenSSL = self.options.OpenSSL
+
+    def requirements(self):
+        self.requires("WebServerAdapterInterface/1.0.2@systelab/stable")
+        self.requires("JWTUtils/1.0.4@systelab/stable")
 
     def build_requirements(self):
         self.build_requires("TestUtilitiesInterface/1.0.3@systelab/stable")
@@ -28,9 +33,10 @@ class RESTAPICoreConan(ConanFile):
         else:
             self.build_requires("gtest/1.8.1@bincrafters/stable")
 
-    def requirements(self):
-        self.requires("WebServerAdapterInterface/1.0.2@systelab/stable")
-        self.requires("JWTUtils/1.0.4@systelab/stable")
+    def build(self):
+        cmake = CMake(self)
+        cmake.configure(source_folder=".")
+        cmake.build()
 
     def imports(self):
         self.copy("*.dll", dst=("bin/%s" % self.settings.build_type), src="bin")
