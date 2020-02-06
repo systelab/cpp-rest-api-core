@@ -4,7 +4,9 @@ matrix:
   include:
   - os: linux
     dist: xenial
+    language: python
     compiler: gcc
+    python: "3.7"
     addons:
       apt:
         sources:
@@ -16,10 +18,14 @@ matrix:
       - BUILD_TYPE=Release
       - CONAN_BUILD_TYPE=Release
       - COMPILER_LIBCXX=libstdc++11
+      - GTEST_VERSION=1.8.1
+      - OPENSSL_VERSION=1.0.2n
 
   - os: linux
     dist: xenial
+    language: python
     compiler: gcc
+    python: "3.7"
     addons:
       apt:
         sources:
@@ -31,10 +37,14 @@ matrix:
       - BUILD_TYPE=Debug
       - CONAN_BUILD_TYPE=Debug
       - COMPILER_LIBCXX=libstdc++11
+      - GTEST_VERSION=1.8.1
+      - OPENSSL_VERSION=1.0.2n
 
   - os: linux
     dist: xenial
+    language: python
     compiler: gcc
+    python: "3.7"
     addons:
       apt:
         sources:
@@ -46,20 +56,25 @@ matrix:
       - BUILD_TYPE=Coverage
       - CONAN_BUILD_TYPE=Debug
       - COMPILER_LIBCXX=libstdc++11
+      - GTEST_VERSION=1.8.1
+      - OPENSSL_VERSION=1.0.2n
 
   - os: osx
     osx_image: xcode10.1
+    language: cpp
     compiler: clang   
     env:
       - BUILD_TYPE=Release
       - CONAN_BUILD_TYPE=Release
       - COMPILER_LIBCXX=libc++
+      - GTEST_VERSION=1.8.1
+      - OPENSSL_VERSION=1.0.2n
 
 install: 
   - if [ $TRAVIS_OS_NAME == linux ]; then sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 90; fi
   - if [ $TRAVIS_OS_NAME == linux ]; then sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-7 90; fi
   - if [[ $TRAVIS_OS_NAME == linux && $BUILD_TYPE == Coverage ]]; then sudo apt-get install lcov; fi
-  - if [ $TRAVIS_OS_NAME == linux ]; then pip install conan --user; fi
+  - if [ $TRAVIS_OS_NAME == linux ]; then pip install conan; fi
   - if [ $TRAVIS_OS_NAME == osx ]; then brew install conan; fi
   - conan user
   - conan remote add systelab-bintray https://api.bintray.com/conan/systelab/conan
@@ -69,7 +84,7 @@ script:
   - g++ --version
   - mkdir -p build
   - cd build
-  - conan install .. -s build_type=${CONAN_BUILD_TYPE} -s compiler.libcxx=${COMPILER_LIBCXX}
+  - conan install .. -s build_type=${CONAN_BUILD_TYPE} -s compiler.libcxx=${COMPILER_LIBCXX} -o gtest=${GTEST_VERSION} -o OpenSSL=${OPENSSL_VERSION}
   - cmake .. -DCMAKE_BUILD_TYPE=${BUILD_TYPE}
   - make
   - cd bin
@@ -86,30 +101,30 @@ script:
   - cd ..
   - |
     if [ -n "$TRAVIS_TAG" ]; then
-      conan export-pkg ../conanfile.py "RESTAPICore/${TRAVIS_TAG:1}@systelab/stable" -s build_type=${CONAN_BUILD_TYPE} -s compiler.libcxx=${COMPILER_LIBCXX};
+      conan export-pkg ../conanfile.py "RESTAPICore/${TRAVIS_TAG:1}@systelab/stable" -s build_type=${CONAN_BUILD_TYPE} -s compiler.libcxx=${COMPILER_LIBCXX} -o gtest=${GTEST_VERSION} -o OpenSSL=${OPENSSL_VERSION};
     else
-      conan export-pkg ../conanfile.py "RESTAPICore/0.0.${TRAVIS_BUILD_NUMBER}@systelab/stable" -s build_type=${CONAN_BUILD_TYPE} -s compiler.libcxx=${COMPILER_LIBCXX};
+      conan export-pkg ../conanfile.py "RESTAPICore/0.0.${TRAVIS_BUILD_NUMBER}@systelab/stable" -s build_type=${CONAN_BUILD_TYPE} -s compiler.libcxx=${COMPILER_LIBCXX} -o gtest=${GTEST_VERSION} -o OpenSSL=${OPENSSL_VERSION};
     fi
   - |
     if [ "$BUILD_TYPE" == "Release" ] || [ "$BUILD_TYPE" == "Debug" ]; then
       if [ -n "$TRAVIS_TAG" ]; then
-        conan test ../test_package/conanfile.py RESTAPICore/${TRAVIS_TAG:1}@systelab/stable -s build_type=${CONAN_BUILD_TYPE} -s compiler.libcxx=${COMPILER_LIBCXX};
+        conan test ../test_package/conanfile.py RESTAPICore/${TRAVIS_TAG:1}@systelab/stable -s build_type=${CONAN_BUILD_TYPE} -s compiler.libcxx=${COMPILER_LIBCXX} -o gtest=${GTEST_VERSION} -o OpenSSL=${OPENSSL_VERSION};
       else
-        conan test ../test_package/conanfile.py RESTAPICore/0.0.${TRAVIS_BUILD_NUMBER}@systelab/stable -s build_type=${CONAN_BUILD_TYPE} -s compiler.libcxx=${COMPILER_LIBCXX};
+        conan test ../test_package/conanfile.py RESTAPICore/0.0.${TRAVIS_BUILD_NUMBER}@systelab/stable -s build_type=${CONAN_BUILD_TYPE} -s compiler.libcxx=${COMPILER_LIBCXX} -o gtest=${GTEST_VERSION} -o OpenSSL=${OPENSSL_VERSION};
       fi
     fi
   - |
     if [ -n "$TRAVIS_TAG" ]; then
-      conan export-pkg ../test/RESTAPICoreTestUtilities/conanfile.py "RESTAPICoreTestUtilities/${TRAVIS_TAG:1}@systelab/stable" -s build_type=${CONAN_BUILD_TYPE} -s compiler.libcxx=${COMPILER_LIBCXX};
+      conan export-pkg ../test/RESTAPICoreTestUtilities/conanfile.py "RESTAPICoreTestUtilities/${TRAVIS_TAG:1}@systelab/stable" -s build_type=${CONAN_BUILD_TYPE} -s compiler.libcxx=${COMPILER_LIBCXX} -o gtest=${GTEST_VERSION} -o OpenSSL=${OPENSSL_VERSION};
     else
-      conan export-pkg ../test/RESTAPICoreTestUtilities/conanfile.py "RESTAPICoreTestUtilities/0.0.${TRAVIS_BUILD_NUMBER}@systelab/stable" -s build_type=${CONAN_BUILD_TYPE} -s compiler.libcxx=${COMPILER_LIBCXX};
+      conan export-pkg ../test/RESTAPICoreTestUtilities/conanfile.py "RESTAPICoreTestUtilities/0.0.${TRAVIS_BUILD_NUMBER}@systelab/stable" -s build_type=${CONAN_BUILD_TYPE} -s compiler.libcxx=${COMPILER_LIBCXX} -o gtest=${GTEST_VERSION} -o OpenSSL=${OPENSSL_VERSION};
     fi
   - |
     if [ "$BUILD_TYPE" == "Release" ] || [ "$BUILD_TYPE" == "Debug" ]; then
       if [ -n "$TRAVIS_TAG" ]; then
-        conan test ../test/RESTAPICoreTestUtilities/test_package/conanfile.py RESTAPICoreTestUtilities/${TRAVIS_TAG:1}@systelab/stable -s build_type=${CONAN_BUILD_TYPE} -s compiler.libcxx=${COMPILER_LIBCXX};
+        conan test ../test/RESTAPICoreTestUtilities/test_package/conanfile.py RESTAPICoreTestUtilities/${TRAVIS_TAG:1}@systelab/stable -s build_type=${CONAN_BUILD_TYPE} -s compiler.libcxx=${COMPILER_LIBCXX} -o gtest=${GTEST_VERSION} -o OpenSSL=${OPENSSL_VERSION};
       else
-        conan test ../test/RESTAPICoreTestUtilities/test_package/conanfile.py RESTAPICoreTestUtilities/0.0.${TRAVIS_BUILD_NUMBER}@systelab/stable -s build_type=${CONAN_BUILD_TYPE} -s compiler.libcxx=${COMPILER_LIBCXX};
+        conan test ../test/RESTAPICoreTestUtilities/test_package/conanfile.py RESTAPICoreTestUtilities/0.0.${TRAVIS_BUILD_NUMBER}@systelab/stable -s build_type=${CONAN_BUILD_TYPE} -s compiler.libcxx=${COMPILER_LIBCXX} -o gtest=${GTEST_VERSION} -o OpenSSL=${OPENSSL_VERSION};
       fi
     fi
   - cd ..
