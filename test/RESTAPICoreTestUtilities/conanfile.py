@@ -11,8 +11,8 @@ class RESTAPICoreTestUtilitiesConan(ConanFile):
     license = "MIT"
     generators = "cmake_find_package"
     settings = "os", "compiler", "build_type", "arch"
-    options = {"gtest": ["1.7.0", "1.8.1"], "OpenSSL": ["1.0.2n"]}
-    default_options = {"gtest":"1.8.1", "OpenSSL":"1.0.2n"}
+    options = {"gtest": ["1.7.0", "1.8.1", "1.10.0"], "OpenSSL": ["1.0.2n", "1.0.2s"]}
+    default_options = {"gtest":"1.10.0", "OpenSSL":"1.0.2s"}
 
     def configure(self):
         self.options["RESTAPICore"].gtest = self.options.gtest
@@ -21,8 +21,10 @@ class RESTAPICoreTestUtilitiesConan(ConanFile):
     def requirements(self):
         if self.options.gtest == "1.7.0":
             self.requires("gtest/1.7.0@systelab/stable")
-        else:
+        elif self.options.gtest == "1.8.1":
             self.requires("gtest/1.8.1@bincrafters/stable")
+        else:
+            self.requires("gtest/1.10.0@systelab/stable")
 
         if ("%s" % self.version) == "None":
             self.requires("RESTAPICore/%s@systelab/stable" % os.environ['VERSION'])
