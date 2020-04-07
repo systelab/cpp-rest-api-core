@@ -22,7 +22,7 @@ class RESTAPICoreConan(ConanFile):
 
     def requirements(self):
         self.requires("WebServerAdapterInterface/1.1.2@systelab/stable")
-        self.requires("JWTUtils/1.0.6@systelab/stable")
+        self.requires("JWTUtils/1.0.7@systelab/stable")
 
     def build_requirements(self):
         self.build_requires("TestUtilitiesInterface/1.0.3@systelab/stable")
