@@ -25,7 +25,7 @@ Prerequisites:
   - [Git](https://git-scm.com/)
   - [Conan](https://conan.io/)
   - [CMake](https://cmake.org/)
-  - [Visual Studio](https://visualstudio.microsoft.com/) (only on Windows)
+  - [Visual Studio 2019](https://visualstudio.microsoft.com/) (only on Windows)
   - [GCC](https://gcc.gnu.org/) (only on Linux)
 
 Build library with the following steps:
@@ -39,8 +39,8 @@ Build library with the following steps:
 ``` bash
 > git clone https://github.com/systelab/cpp-rest-api-core
 > md build && cd build
-> conan install .. -s arch=x86
-> cmake ..
+> conan install .. -s build_type=Debug -s compiler.toolset=v142 -s arch=x86_64
+> cmake .. -G "Visual Studio 16 2019" -A x64
 > devenv.exe RESTAPICore.sln
 ```
 
