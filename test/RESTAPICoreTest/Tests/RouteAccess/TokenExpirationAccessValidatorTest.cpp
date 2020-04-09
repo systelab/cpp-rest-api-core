@@ -4,13 +4,13 @@
 #include "RESTAPICore/Endpoint/ClaimConstants.h"
 #include "RESTAPICore/Endpoint/EndpointRequestData.h"
 
-#include "RESTAPICoreTestUtilities/Stubs/StubEpochTimeService.h"
+#include "TimeAdapterTestUtilities/Stubs/StubTimeAdapter.h"
 
 #include <chrono>
 
 
 using namespace testing;
-using namespace systelab::rest_api_core::test_utility;
+using namespace systelab::time::test_utility;
 
 namespace systelab { namespace rest_api_core { namespace unit_test {
 
@@ -57,13 +57,23 @@ namespace systelab { namespace rest_api_core { namespace unit_test {
 		void SetUp()
 		{
 			unsigned int expirationSeconds = 1800;
-			m_validator = std::make_unique<TokenExpirationAccessValidator>(expirationSeconds, m_epochTimeService);
+			setUpTimeAdapter();
+
+			m_validator = std::make_unique<TokenExpirationAccessValidator>(m_timeAdapter, expirationSeconds);
+		}
+
+		void setUpTimeAdapter()
+		{
+			long long currentEpoch = 1586432000;
+			auto currentTimePoint = std::chrono::system_clock::time_point{ std::chrono::seconds{currentEpoch} };
+			m_timeAdapter.setCurrentTime(currentTimePoint);
 		}
 
 		EndpointRequestData buildEndpointRequestDataWithIATOfCurrentTime()
 		{
 			std::map<std::string, std::string> claims;
-			claims.insert( std::make_pair(claim::ISSUED_AT, std::to_string(m_epochTimeService.getCurrentEpochTime())) );
+			long long currentEpoch = std::chrono::system_clock::to_time_t(m_timeAdapter.getCurrentUTCTime());
+			claims.insert( std::make_pair(claim::ISSUED_AT, std::to_string(currentEpoch)) );
 
 			return buildEndpointRequestData(claims);
 		}
@@ -84,17 +94,18 @@ namespace systelab { namespace rest_api_core { namespace unit_test {
 
 	protected:
 		std::unique_ptr<TokenExpirationAccessValidator> m_validator;
-		StubEpochTimeService m_epochTimeService;
+
+		StubTimeAdapter m_timeAdapter;
 		long m_expirationSeconds;
 	};
 
 
 	TEST_P(TokenExpirationAccessValidatorTest, testHasAccessReturnsExpectedValue)
 	{
-		m_validator = std::make_unique<TokenExpirationAccessValidator>(GetParam().expirationSeconds, m_epochTimeService);
+		m_validator = std::make_unique<TokenExpirationAccessValidator>(m_timeAdapter, GetParam().expirationSeconds);
 		EndpointRequestData endpointRequestData = buildEndpointRequestDataWithIATOfCurrentTime();
 
-		m_epochTimeService.addSeconds(GetParam().elapsedSeconds);
+		m_timeAdapter.addSeconds(GetParam().elapsedSeconds);
 
 		ASSERT_EQ(GetParam().expectedAccess, m_validator->hasAccess(endpointRequestData));
 	}

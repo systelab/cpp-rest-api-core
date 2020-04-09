@@ -17,11 +17,10 @@
 
 #include "RESTAPICoreTestUtilities/Mocks/Endpoint/MockEndpoint.h"
 #include "RESTAPICoreTestUtilities/Mocks/RouteAccess/MockUserRoleService.h"
-#include "RESTAPICoreTestUtilities/Stubs/StubEpochTimeService.h"
-
-#include "JSONAdapterTestUtilities/JSONAdapterUtilities.h"
 
 #include "TestUtilitiesInterface/EntityComparator.h"
+#include "JSONAdapterTestUtilities/JSONAdapterUtilities.h"
+#include "TimeAdapterTestUtilities/Stubs/StubTimeAdapter.h"
 
 #include <chrono>
 
@@ -29,6 +28,7 @@
 using namespace testing;
 using namespace systelab::json::test_utility;
 using namespace systelab::rest_api_core::test_utility;
+using namespace systelab::time::test_utility;
 
 namespace systelab { namespace rest_api_core { namespace unit_test {
 
@@ -77,7 +77,7 @@ namespace systelab { namespace rest_api_core { namespace unit_test {
 				[this]() -> std::unique_ptr<IRouteAccessValidator>
 				{
 					long expirationSeconds = 600; // 10 minutes
-					return std::make_unique<TokenExpirationAccessValidator>(expirationSeconds, m_epochTimeService);
+					return std::make_unique<TokenExpirationAccessValidator>(m_timeAdapter, expirationSeconds);
 				};
 
 			m_adminUserAccessValidator =
@@ -179,7 +179,7 @@ namespace systelab { namespace rest_api_core { namespace unit_test {
 			{
 				std::vector< std::pair<std::string, std::string> > authorizationClaims;
 				authorizationClaims.push_back( std::make_pair(claim::SUBJECT, username) );
-				authorizationClaims.push_back( std::make_pair(claim::ISSUED_AT, std::to_string(m_epochTimeService.getCurrentEpochTime())) );
+				authorizationClaims.push_back( std::make_pair(claim::ISSUED_AT, std::to_string(std::chrono::system_clock::to_time_t(m_timeAdapter.getCurrentUTCTime()))) );
 				std::string token = m_tokenBuilderService->buildJWT(m_jwtKey, authorizationClaims);
 				request.getHeaders().addHeader(web_server::AUTHORIZATION, "Bearer " + token);
 			}
@@ -206,7 +206,7 @@ namespace systelab { namespace rest_api_core { namespace unit_test {
 		std::string m_jwtKey;
 
 		std::unique_ptr<RoutesFactory> m_routesFactory;
-		StubEpochTimeService m_epochTimeService;
+		StubTimeAdapter m_timeAdapter;
 		MockUserRoleService m_userRoleService;
 		std::string m_adminUsername;
 		std::string m_basicUsername;
@@ -297,7 +297,7 @@ namespace systelab { namespace rest_api_core { namespace unit_test {
 	TEST_F(RouterComponentTest, testProcessGETForRESTAPIUsersWithBasicRoleButExpiredTokenReturnsReplyStatusForbidden)
 	{
 		auto request = buildRequest("GET", "/rest/api/users", m_basicUsername);
-		m_epochTimeService.addSeconds(601);
+		m_timeAdapter.addSeconds(601);
 		auto reply = m_router->process(request);
 		ASSERT_TRUE(reply != NULL);
 		EXPECT_EQ(reply->getStatus(), web_server::Reply::FORBIDDEN);
