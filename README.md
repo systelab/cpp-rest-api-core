@@ -268,11 +268,11 @@ Another built-in route access validator (class `TokenExpirationAccessValidator`)
 
 // Route that does not allow using tokens generated more than 10 min (600 seconds) ago
 m_router->addRoute(routesFactory.buildRoute("GET", "/rest/api/yourendpoint",
-                   { [this](){ return std::make_unique<TokenExpirationAccessValidator>(600, m_epochTimeService) } },
+                   { [this](){ return std::make_unique<TokenExpirationAccessValidator>(m_timeAdapter, 600) } },
 		   []() { return std::make_unique<YourEndpoint>() }) );
 ```
 
-> The `m_epochTimeService` member is an instance of the `EpochTimeService` class, which provides a method to query the current time of the system.
+> The `m_timeAdapter` member is an instance of the `systelab::time::ITimeAdapter` class, which provides a method to query the current time of the system. See documentation of [cpp-time-adapter](https://github.com/systelab/cpp-time-adapter) repository for further details about it.
 
 
 ### Custom access validation
