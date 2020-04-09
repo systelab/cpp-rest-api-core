@@ -1,12 +1,14 @@
 #include "stdafx.h"
 #include "EpochTimeService.h"
 
+#include "TimeAdapter/ITimeAdapter.h"
 #include <ctime>
 
 
 namespace systelab { namespace rest_api_core {
 
-	EpochTimeService::EpochTimeService()
+	EpochTimeService::EpochTimeService(const systelab::time::ITimeAdapter& timeAdapter)
+		:m_timeAdapter(timeAdapter)
 	{
 	}
 
@@ -14,7 +16,7 @@ namespace systelab { namespace rest_api_core {
 
 	long long EpochTimeService::getCurrentEpochTime() const
 	{
-		return std::time(nullptr);
+		return std::chrono::system_clock::to_time_t(m_timeAdapter.getCurrentUTCTime());
 	}
 
 }}
