@@ -7,6 +7,7 @@ enable_testing()
 find_package(gtest)
 find_package(WebServerAdapterTestUtilities)
 find_package(JSONAdapterTestUtilities)
+find_package(TimeAdapterTestUtilities)
 
 # Add project folder into includes
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -18,7 +19,8 @@ file(GLOB_RECURSE REST_API_CORE_TEST_PROJECT_HDR "*.h")
 add_executable(${REST_API_CORE_TEST_PROJECT} ${REST_API_CORE_TEST_PROJECT_SRC} ${REST_API_CORE_TEST_PROJECT_HDR})
 target_link_libraries(${REST_API_CORE_TEST_PROJECT} RESTAPICore RESTAPICoreTestUtilities gtest::gtest
 					  WebServerAdapterTestUtilities::WebServerAdapterTestUtilities
-					  JSONAdapterTestUtilities::JSONAdapterTestUtilities)
+					  JSONAdapterTestUtilities::JSONAdapterTestUtilities
+					  TimeAdapterTestUtilities::TimeAdapterTestUtilities)
 
 #Configure source groups
 foreach(FILE ${REST_API_CORE_TEST_PROJECT_SRC} ${REST_API_CORE_TEST_PROJECT_HDR}) 
