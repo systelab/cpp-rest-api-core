@@ -389,12 +389,28 @@ namespace systelab { namespace rest_api_core { namespace unit_test {
 
 
 	// Access validators
+	TEST_F(RouteTest, testRouteWithSingleAccessValidatorAndNoAuthorizationHeaderReturnsUnauthorizedReply)
+	{
+		EXPECT_CALL(m_endpoint, executeProxy(_)).Times(0);
+
+		auto route = m_routesFactory->buildRoute("GET", "/rest/api/test", { m_passAccessValidatorFactoryMethod }, m_endpointFactoryMethod);
+		auto request = buildSimpleRequest("GET", "/rest/api/test");
+		auto reply = route->execute(*request);
+
+		ASSERT_TRUE(reply != NULL);
+		ASSERT_EQ(web_server::Reply::UNAUTHORIZED, reply->getStatus());
+		ASSERT_EQ("{}", reply->getContent());
+	}
+
 	TEST_F(RouteTest, testRouteWithSingleAccessValidatorThatFailsReturnsForbiddenReply)
 	{
 		EXPECT_CALL(m_endpoint, executeProxy(_)).Times(0);
 
+		web_server::RequestHeaders requestHeaders;
+		requestHeaders.addHeader(web_server::AUTHORIZATION, "anNtaXRoOm15cGFzc3dvcmQ=");
+		auto request = buildRequestWithHeaders("GET", "/rest/api/test", requestHeaders);
+
 		auto route = m_routesFactory->buildRoute("GET", "/rest/api/test", { m_failAccessValidatorFactoryMethod }, m_endpointFactoryMethod);
-		auto request = buildSimpleRequest("GET", "/rest/api/test");
 		auto reply = route->execute(*request);
 	
 		ASSERT_TRUE(reply != NULL);
@@ -404,11 +420,15 @@ namespace systelab { namespace rest_api_core { namespace unit_test {
 
 	TEST_F(RouteTest, testRouteWithSingleAccessValidatorThatPassesCallsEndpoint)
 	{
+		web_server::RequestHeaders requestHeaders;
+		requestHeaders.addHeader(web_server::AUTHORIZATION, "anNtaXRoOm15cGFzc3dvcmQ=");
+
 		EndpointRequestData expectedEndpointRequestData;
+		expectedEndpointRequestData.setHeaders(requestHeaders);
 		EXPECT_CALL(m_endpoint, executeProxy(isEqTo(expectedEndpointRequestData)));
 
+		auto request = buildRequestWithHeaders("GET", "/rest/api/test", requestHeaders);
 		auto route = m_routesFactory->buildRoute("GET", "/rest/api/test", { m_passAccessValidatorFactoryMethod }, m_endpointFactoryMethod);
-		auto request = buildSimpleRequest("GET", "/rest/api/test");
 		auto reply = route->execute(*request);
 
 		ASSERT_TRUE(reply != NULL);
@@ -420,10 +440,13 @@ namespace systelab { namespace rest_api_core { namespace unit_test {
 	{
 		EXPECT_CALL(m_endpoint, executeProxy(_)).Times(0);
 
+		web_server::RequestHeaders requestHeaders;
+		requestHeaders.addHeader(web_server::AUTHORIZATION, "anNtaXRoOm15cGFzc3dvcmQ=");
+		auto request = buildRequestWithHeaders("GET", "/rest/api/test", requestHeaders);
+
 		auto route = m_routesFactory->buildRoute("GET", "/rest/api/test",
 												 { m_passAccessValidatorFactoryMethod, m_failAccessValidatorFactoryMethod,
 												   m_passAccessValidatorFactoryMethod }, m_endpointFactoryMethod);
-		auto request = buildSimpleRequest("GET", "/rest/api/test");
 		auto reply = route->execute(*request);
 
 		ASSERT_TRUE(reply != NULL);
@@ -433,13 +456,17 @@ namespace systelab { namespace rest_api_core { namespace unit_test {
 
 	TEST_F(RouteTest, testRouteWithMultipleAccessValidatorsAndAllPassCallsEndpoint)
 	{
+		web_server::RequestHeaders requestHeaders;
+		requestHeaders.addHeader(web_server::AUTHORIZATION, "anNtaXRoOm15cGFzc3dvcmQ=");
+
 		EndpointRequestData expectedEndpointRequestData;
+		expectedEndpointRequestData.setHeaders(requestHeaders);
 		EXPECT_CALL(m_endpoint, executeProxy(isEqTo(expectedEndpointRequestData)));
 
 		auto route = m_routesFactory->buildRoute("GET", "/rest/api/test",
 												 { m_passAccessValidatorFactoryMethod, m_passAccessValidatorFactoryMethod,
 												   m_passAccessValidatorFactoryMethod }, m_endpointFactoryMethod);
-		auto request = buildSimpleRequest("GET", "/rest/api/test");
+		auto request = buildRequestWithHeaders("GET", "/rest/api/test", requestHeaders);
 		auto reply = route->execute(*request);
 
 		ASSERT_TRUE(reply != NULL);

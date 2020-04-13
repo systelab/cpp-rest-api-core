@@ -6,6 +6,10 @@
 #include "RESTAPICore/Router/RouteFragment.h"
 
 
+namespace systelab { namespace web_server {
+	class Reply;
+}}
+
 namespace systelab { namespace rest_api_core {
 
 	class IAuthorizationDataBuilder;
@@ -22,7 +26,9 @@ namespace systelab { namespace rest_api_core {
 			  const std::string& uri,
 			  const IAuthorizationDataBuilder&,
 			  const std::vector<RouteAccessValidatorFactoryMethod>&,
-			  EndpointFactoryMethod factoryMethod);
+			  EndpointFactoryMethod factoryMethod,
+			  const systelab::web_server::Reply& unauthorizedReply,
+			  const systelab::web_server::Reply& forbiddenReply);
 
 		std::unique_ptr<systelab::web_server::Reply> execute(const systelab::web_server::Request&) const;
 
@@ -32,6 +38,8 @@ namespace systelab { namespace rest_api_core {
 		const IAuthorizationDataBuilder& m_authorizationDataBuilder;
 		std::vector<RouteAccessValidatorFactoryMethod> m_accessValidatorFactoryMethods;
 		EndpointFactoryMethod m_endpointFactoryMethod;
+		const systelab::web_server::Reply& m_unauthorizedReply;
+		const systelab::web_server::Reply& m_forbiddenReply;
 
 	protected:
 		bool validateMethod(const systelab::web_server::Request&) const;

@@ -20,12 +20,16 @@ namespace systelab { namespace rest_api_core {
 				 const std::string& uri,
 				 const IAuthorizationDataBuilder& authorizationDataBuilder,
 				 const std::vector<RouteAccessValidatorFactoryMethod>& accessValidatorFactoryMethods,
-				 EndpointFactoryMethod endpointFactoryMethod)
+				 EndpointFactoryMethod endpointFactoryMethod,
+				 const systelab::web_server::Reply& unauthorizedReply,
+				 const systelab::web_server::Reply& forbiddenReply)
 		:m_method(method)
 		,m_fragments(buildFragmentsFromURI(uri))
 		,m_authorizationDataBuilder(authorizationDataBuilder)
 		,m_accessValidatorFactoryMethods(accessValidatorFactoryMethods)
 		,m_endpointFactoryMethod(endpointFactoryMethod)
+		,m_unauthorizedReply(unauthorizedReply)
+		,m_forbiddenReply(forbiddenReply)
 	{
 	}
 
@@ -42,13 +46,19 @@ namespace systelab { namespace rest_api_core {
 			return nullptr;
 		}
 
+		if ((m_accessValidatorFactoryMethods.size() > 0) && !requestData->getHeaders().hasHeader(systelab::web_server::AUTHORIZATION))
+		{
+			return std::make_unique<systelab::web_server::Reply>(systelab::web_server::Reply::UNAUTHORIZED,
+																 m_unauthorizedReply.getHeaders(), m_unauthorizedReply.getContent());
+		}
+
 		for (auto& accessValidatorFactoryMethod : m_accessValidatorFactoryMethods)
 		{
 			auto accessValidator = accessValidatorFactoryMethod();
 			if (!accessValidator->hasAccess(*requestData))
 			{
-				std::map<std::string, std::string> headers = { {std::string("Content-Type"), std::string("application/json")} };
-				return std::make_unique<systelab::web_server::Reply>(systelab::web_server::Reply::FORBIDDEN, headers, "{}");
+				return std::make_unique<systelab::web_server::Reply>(systelab::web_server::Reply::FORBIDDEN,
+																	 m_forbiddenReply.getHeaders(), m_forbiddenReply.getContent());
 			}
 		}
 

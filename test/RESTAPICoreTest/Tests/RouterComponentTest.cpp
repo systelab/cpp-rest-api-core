@@ -68,7 +68,13 @@ namespace systelab { namespace rest_api_core { namespace unit_test {
 
 		void setUpRoutesFactory()
 		{
+			std::map<std::string, std::string> headers = { {"Content-Type", "application/json"}, {"CustomHeader", "CustomValue"} };
+			m_unauthorizedReply = systelab::web_server::Reply(systelab::web_server::Reply::UNAUTHORIZED, headers, "{ \"message\": \"Unauthorized reply\" }");
+			m_forbiddenReply = systelab::web_server::Reply(systelab::web_server::Reply::FORBIDDEN, headers, "{ \"message\": \"Forbidden reply\" }");
+
 			m_routesFactory = std::make_unique<RoutesFactory>(m_jwtKey);
+			m_routesFactory->setUnauthorizedReply(m_unauthorizedReply);
+			m_routesFactory->setForbiddenReply(m_forbiddenReply);
 		}
 
 		void setUpAccessValidatorFactoryMethods()
@@ -214,6 +220,9 @@ namespace systelab { namespace rest_api_core { namespace unit_test {
 		std::function< std::unique_ptr<IRouteAccessValidator>() > m_tokenExpirationAccessValidator;
 		std::function< std::unique_ptr<IRouteAccessValidator>() > m_adminUserAccessValidator;
 		std::function< std::unique_ptr<IRouteAccessValidator>() > m_basicUserAccessValidator;
+
+		systelab::web_server::Reply m_unauthorizedReply;
+		systelab::web_server::Reply m_forbiddenReply;
 	};
 
 
@@ -268,40 +277,36 @@ namespace systelab { namespace rest_api_core { namespace unit_test {
 
 
 	// Requests without access due to user role
-	TEST_F(RouterComponentTest, testProcessDELETEForRESTAPIUsers789WithAnonymousRequestReturnsReplyStatusForbidden)
+	TEST_F(RouterComponentTest, testProcessDELETEForRESTAPIUsers789WithAnonymousRequestReturnsConfiguredUnauthorizedReply)
 	{
 		auto reply = m_router->process(buildRequest("DELETE", "/rest/api/users/789"));
 		ASSERT_TRUE(reply != NULL);
-		EXPECT_EQ(reply->getStatus(), web_server::Reply::FORBIDDEN);
-		EXPECT_TRUE(compareJSONs("{}", reply->getContent(), m_jsonAdapter));
+		EXPECT_TRUE(systelab::test_utility::EntityComparator()(m_unauthorizedReply, *reply));
 	}
 
-	TEST_F(RouterComponentTest, testProcessDELETEForRESTAPIUsers789WithBasicRoleReturnsReplyStatusForbidden)
+	TEST_F(RouterComponentTest, testProcessDELETEForRESTAPIUsers789WithBasicRoleReturnsConfiguredForbiddenReply)
 	{
 		auto reply = m_router->process(buildRequest("DELETE", "/rest/api/users/789", m_basicUsername));
 		ASSERT_TRUE(reply != NULL);
-		EXPECT_EQ(reply->getStatus(), web_server::Reply::FORBIDDEN);
-		EXPECT_TRUE(compareJSONs("{}", reply->getContent(), m_jsonAdapter));
+		EXPECT_TRUE(systelab::test_utility::EntityComparator()(m_forbiddenReply, *reply));
 	}
 
-	TEST_F(RouterComponentTest, testProcessGETForRESTAPIUsers789WithAnonymousRequestReturnsReplyStatusForbidden)
+	TEST_F(RouterComponentTest, testProcessGETForRESTAPIUsers789WithAnonymousRequestReturnsConfiguredUnauthorizedReply)
 	{
 		auto reply = m_router->process(buildRequest("GET", "/rest/api/users/789"));
 		ASSERT_TRUE(reply != NULL);
-		EXPECT_EQ(reply->getStatus(), web_server::Reply::FORBIDDEN);
-		EXPECT_TRUE(compareJSONs("{}", reply->getContent(), m_jsonAdapter));
+		EXPECT_TRUE(systelab::test_utility::EntityComparator()(m_unauthorizedReply, *reply));
 	}
 
 
 	// Requests without access due to expired token
-	TEST_F(RouterComponentTest, testProcessGETForRESTAPIUsersWithBasicRoleButExpiredTokenReturnsReplyStatusForbidden)
+	TEST_F(RouterComponentTest, testProcessGETForRESTAPIUsersWithBasicRoleButExpiredTokenReturnsConfiguredForbiddenReply)
 	{
 		auto request = buildRequest("GET", "/rest/api/users", m_basicUsername);
 		m_timeAdapter.addSeconds(601);
 		auto reply = m_router->process(request);
 		ASSERT_TRUE(reply != NULL);
-		EXPECT_EQ(reply->getStatus(), web_server::Reply::FORBIDDEN);
-		EXPECT_TRUE(compareJSONs("{}", reply->getContent(), m_jsonAdapter));
+		EXPECT_TRUE(systelab::test_utility::EntityComparator()(m_forbiddenReply, *reply));
 	}
 
 
