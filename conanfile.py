@@ -23,13 +23,13 @@ class RESTAPICoreConan(ConanFile):
         self.options["JWTUtils"].OpenSSL = self.options.OpenSSL
 
     def requirements(self):
-        self.requires("WebServerAdapterInterface/1.1.2@systelab/stable")
+        self.requires("WebServerAdapterInterface/1.1.3@systelab/stable")
         self.requires("JWTUtils/1.0.8@systelab/stable")
         self.requires("TimeAdapter/1.0.2@systelab/stable")
 
     def build_requirements(self):
         self.build_requires("TestUtilitiesInterface/1.0.3@systelab/stable")
-        self.build_requires("WebServerAdapterTestUtilities/1.1.2@systelab/stable")
+        self.build_requires("WebServerAdapterTestUtilities/1.1.3@systelab/stable")
         self.build_requires("JSONAdapterTestUtilities/1.0.10@systelab/stable")
         self.build_requires("TimeAdapterTestUtilities/1.0.2@systelab/stable")
         if self.options.gtest == "1.7.0":
