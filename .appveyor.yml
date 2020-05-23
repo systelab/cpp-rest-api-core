@@ -21,7 +21,7 @@ environment:
     visual_studio: Visual Studio 16 2019
     compiler_toolset: v142
     gtest: 1.10.0
-    OpenSSL: 1.0.2s
+    OpenSSL: 1.1.1g
 
   - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
     arch: x86
@@ -41,17 +41,17 @@ install:
 before_build:
   - md build
   - cd build
-  - conan install .. -s build_type=%CONFIGURATION% -s compiler.toolset=%COMPILER_TOOLSET% -s arch=%ARCH% -o gtest=%GTEST% -o OpenSSL=%OPENSSL%
+  - conan install .. -s build_type=%CONFIGURATION% -s compiler.toolset=%COMPILER_TOOLSET% -s arch=%ARCH% -o gtest=%GTEST% -o openssl=%OPENSSL%
   - cmake .. -G "%VISUAL_STUDIO%" -A %PLATFORM%
   
 build:
   project: $(APPVEYOR_BUILD_FOLDER)\build\RESTAPICore.sln
 
 after_build:
-  - conan export-pkg ../conanfile.py RESTAPICore/%APPVEYOR_BUILD_VERSION%@systelab/stable -s build_type=%CONFIGURATION% -s compiler.toolset=%COMPILER_TOOLSET% -s arch=%ARCH% -o gtest=%GTEST% -o OpenSSL=%OPENSSL%
-  - conan test ../test_package/conanfile.py RESTAPICore/%APPVEYOR_BUILD_VERSION%@systelab/stable -s build_type=%CONFIGURATION% -s compiler.toolset=%COMPILER_TOOLSET% -s arch=%ARCH% -o gtest=%GTEST% -o OpenSSL=%OPENSSL%
-  - conan export-pkg ../test/RESTAPICoreTestUtilities/conanfile.py RESTAPICoreTestUtilities/%APPVEYOR_BUILD_VERSION%@systelab/stable -s build_type=%CONFIGURATION% -s compiler.toolset=%COMPILER_TOOLSET% -s arch=%ARCH% -o gtest=%GTEST% -o OpenSSL=%OPENSSL%
-  - conan test ../test/RESTAPICoreTestUtilities/test_package/conanfile.py RESTAPICoreTestUtilities/%APPVEYOR_BUILD_VERSION%@systelab/stable -s build_type=%CONFIGURATION% -s compiler.toolset=%COMPILER_TOOLSET% -s arch=%ARCH% -o gtest=%GTEST% -o OpenSSL=%OPENSSL%
+  - conan export-pkg ../conanfile.py RESTAPICore/%APPVEYOR_BUILD_VERSION%@systelab/stable -s build_type=%CONFIGURATION% -s compiler.toolset=%COMPILER_TOOLSET% -s arch=%ARCH% -o gtest=%GTEST% -o openssl=%OPENSSL%
+  - conan test ../test_package/conanfile.py RESTAPICore/%APPVEYOR_BUILD_VERSION%@systelab/stable -s build_type=%CONFIGURATION% -s compiler.toolset=%COMPILER_TOOLSET% -s arch=%ARCH% -o gtest=%GTEST% -o openssl=%OPENSSL%
+  - conan export-pkg ../test/RESTAPICoreTestUtilities/conanfile.py RESTAPICoreTestUtilities/%APPVEYOR_BUILD_VERSION%@systelab/stable -s build_type=%CONFIGURATION% -s compiler.toolset=%COMPILER_TOOLSET% -s arch=%ARCH% -o gtest=%GTEST% -o openssl=%OPENSSL%
+  - conan test ../test/RESTAPICoreTestUtilities/test_package/conanfile.py RESTAPICoreTestUtilities/%APPVEYOR_BUILD_VERSION%@systelab/stable -s build_type=%CONFIGURATION% -s compiler.toolset=%COMPILER_TOOLSET% -s arch=%ARCH% -o gtest=%GTEST% -o openssl=%OPENSSL%
 
 test_script:
   - ps: cd bin

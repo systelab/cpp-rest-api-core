@@ -4,12 +4,12 @@ from conans import ConanFile, CMake
 class RESTAPICoreTestConan(ConanFile):
     settings = "os", "compiler", "build_type", "arch"
     generators = "cmake_find_package"
-    options = {"gtest": ["1.7.0", "1.8.1", "1.10.0"], "OpenSSL": ["1.0.2n", "1.0.2s"]}
-    default_options = {"gtest":"1.10.0", "OpenSSL":"1.0.2s"}
+    options = {"gtest": ["1.7.0", "1.8.1", "1.10.0"], "openssl": ["1.0.2n", "1.0.2s", "1.1.1g"]}
+    default_options = {"gtest":"1.10.0", "openssl":"1.1.1g"}
 
     def configure(self):
         self.options["RESTAPICore"].gtest = self.options.gtest
-        self.options["RESTAPICore"].OpenSSL = self.options.OpenSSL
+        self.options["RESTAPICore"].openssl = self.options.openssl
 
     def build(self):
         cmake = CMake(self)

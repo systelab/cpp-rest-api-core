@@ -10,8 +10,8 @@ class RESTAPICoreConan(ConanFile):
     license = "MIT"
     generators = "cmake_find_package"
     settings = "os", "compiler", "build_type", "arch"
-    options = {"gtest": ["1.7.0", "1.8.1", "1.10.0"], "OpenSSL": ["1.0.2n", "1.0.2s"]}
-    default_options = {"gtest":"1.10.0", "OpenSSL":"1.0.2s"}
+    options = {"gtest": ["1.7.0", "1.8.1", "1.10.0"], "openssl": ["1.0.2n", "1.0.2s", "1.1.1g"]}
+    default_options = {"gtest":"1.10.0", "openssl":"1.1.1g"}
     exports_sources = "*"
 
     def configure(self):
@@ -20,11 +20,11 @@ class RESTAPICoreConan(ConanFile):
         self.options["TimeAdapter"].gtest = self.options.gtest
         self.options["TimeAdapterTestUtilities"].gtest = self.options.gtest
         self.options["JWTUtils"].gtest = self.options.gtest
-        self.options["JWTUtils"].OpenSSL = self.options.OpenSSL
+        self.options["JWTUtils"].openssl = self.options.openssl
 
     def requirements(self):
         self.requires("WebServerAdapterInterface/1.1.3@systelab/stable")
-        self.requires("JWTUtils/1.0.8@systelab/stable")
+        self.requires("JWTUtils/1.1.0@systelab/stable")
         self.requires("TimeAdapter/1.0.2@systelab/stable")
 
     def build_requirements(self):

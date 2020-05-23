@@ -82,7 +82,7 @@ script:
   - g++ --version
   - mkdir -p build
   - cd build
-  - conan install .. -s build_type=${CONAN_BUILD_TYPE} -s compiler.libcxx=${COMPILER_LIBCXX} -o gtest=${GTEST_VERSION} -o OpenSSL=${OPENSSL_VERSION}
+  - conan install .. -s build_type=${CONAN_BUILD_TYPE} -s compiler.libcxx=${COMPILER_LIBCXX} -o gtest=${GTEST_VERSION} -o openssl=${OPENSSL_VERSION}
   - cmake .. -DCMAKE_BUILD_TYPE=${BUILD_TYPE}
   - make
   - cd bin
@@ -99,30 +99,30 @@ script:
   - cd ..
   - |
     if [ -n "$TRAVIS_TAG" ]; then
-      conan export-pkg ../conanfile.py "RESTAPICore/${TRAVIS_TAG:1}@systelab/stable" -s build_type=${CONAN_BUILD_TYPE} -s compiler.libcxx=${COMPILER_LIBCXX} -o gtest=${GTEST_VERSION} -o OpenSSL=${OPENSSL_VERSION};
+      conan export-pkg ../conanfile.py "RESTAPICore/${TRAVIS_TAG:1}@systelab/stable" -s build_type=${CONAN_BUILD_TYPE} -s compiler.libcxx=${COMPILER_LIBCXX} -o gtest=${GTEST_VERSION} -o openssl=${OPENSSL_VERSION};
     else
-      conan export-pkg ../conanfile.py "RESTAPICore/0.0.${TRAVIS_BUILD_NUMBER}@systelab/stable" -s build_type=${CONAN_BUILD_TYPE} -s compiler.libcxx=${COMPILER_LIBCXX} -o gtest=${GTEST_VERSION} -o OpenSSL=${OPENSSL_VERSION};
+      conan export-pkg ../conanfile.py "RESTAPICore/0.0.${TRAVIS_BUILD_NUMBER}@systelab/stable" -s build_type=${CONAN_BUILD_TYPE} -s compiler.libcxx=${COMPILER_LIBCXX} -o gtest=${GTEST_VERSION} -o openssl=${OPENSSL_VERSION};
     fi
   - |
     if [ "$BUILD_TYPE" == "Release" ] || [ "$BUILD_TYPE" == "Debug" ]; then
       if [ -n "$TRAVIS_TAG" ]; then
-        conan test ../test_package/conanfile.py RESTAPICore/${TRAVIS_TAG:1}@systelab/stable -s build_type=${CONAN_BUILD_TYPE} -s compiler.libcxx=${COMPILER_LIBCXX} -o gtest=${GTEST_VERSION} -o OpenSSL=${OPENSSL_VERSION};
+        conan test ../test_package/conanfile.py RESTAPICore/${TRAVIS_TAG:1}@systelab/stable -s build_type=${CONAN_BUILD_TYPE} -s compiler.libcxx=${COMPILER_LIBCXX} -o gtest=${GTEST_VERSION} -o openssl=${OPENSSL_VERSION};
       else
-        conan test ../test_package/conanfile.py RESTAPICore/0.0.${TRAVIS_BUILD_NUMBER}@systelab/stable -s build_type=${CONAN_BUILD_TYPE} -s compiler.libcxx=${COMPILER_LIBCXX} -o gtest=${GTEST_VERSION} -o OpenSSL=${OPENSSL_VERSION};
+        conan test ../test_package/conanfile.py RESTAPICore/0.0.${TRAVIS_BUILD_NUMBER}@systelab/stable -s build_type=${CONAN_BUILD_TYPE} -s compiler.libcxx=${COMPILER_LIBCXX} -o gtest=${GTEST_VERSION} -o openssl=${OPENSSL_VERSION};
       fi
     fi
   - |
     if [ -n "$TRAVIS_TAG" ]; then
-      conan export-pkg ../test/RESTAPICoreTestUtilities/conanfile.py "RESTAPICoreTestUtilities/${TRAVIS_TAG:1}@systelab/stable" -s build_type=${CONAN_BUILD_TYPE} -s compiler.libcxx=${COMPILER_LIBCXX} -o gtest=${GTEST_VERSION} -o OpenSSL=${OPENSSL_VERSION};
+      conan export-pkg ../test/RESTAPICoreTestUtilities/conanfile.py "RESTAPICoreTestUtilities/${TRAVIS_TAG:1}@systelab/stable" -s build_type=${CONAN_BUILD_TYPE} -s compiler.libcxx=${COMPILER_LIBCXX} -o gtest=${GTEST_VERSION} -o openssl=${OPENSSL_VERSION};
     else
-      conan export-pkg ../test/RESTAPICoreTestUtilities/conanfile.py "RESTAPICoreTestUtilities/0.0.${TRAVIS_BUILD_NUMBER}@systelab/stable" -s build_type=${CONAN_BUILD_TYPE} -s compiler.libcxx=${COMPILER_LIBCXX} -o gtest=${GTEST_VERSION} -o OpenSSL=${OPENSSL_VERSION};
+      conan export-pkg ../test/RESTAPICoreTestUtilities/conanfile.py "RESTAPICoreTestUtilities/0.0.${TRAVIS_BUILD_NUMBER}@systelab/stable" -s build_type=${CONAN_BUILD_TYPE} -s compiler.libcxx=${COMPILER_LIBCXX} -o gtest=${GTEST_VERSION} -o openssl=${OPENSSL_VERSION};
     fi
   - |
     if [ "$BUILD_TYPE" == "Release" ] || [ "$BUILD_TYPE" == "Debug" ]; then
       if [ -n "$TRAVIS_TAG" ]; then
-        conan test ../test/RESTAPICoreTestUtilities/test_package/conanfile.py RESTAPICoreTestUtilities/${TRAVIS_TAG:1}@systelab/stable -s build_type=${CONAN_BUILD_TYPE} -s compiler.libcxx=${COMPILER_LIBCXX} -o gtest=${GTEST_VERSION} -o OpenSSL=${OPENSSL_VERSION};
+        conan test ../test/RESTAPICoreTestUtilities/test_package/conanfile.py RESTAPICoreTestUtilities/${TRAVIS_TAG:1}@systelab/stable -s build_type=${CONAN_BUILD_TYPE} -s compiler.libcxx=${COMPILER_LIBCXX} -o gtest=${GTEST_VERSION} -o openssl=${OPENSSL_VERSION};
       else
-        conan test ../test/RESTAPICoreTestUtilities/test_package/conanfile.py RESTAPICoreTestUtilities/0.0.${TRAVIS_BUILD_NUMBER}@systelab/stable -s build_type=${CONAN_BUILD_TYPE} -s compiler.libcxx=${COMPILER_LIBCXX} -o gtest=${GTEST_VERSION} -o OpenSSL=${OPENSSL_VERSION};
+        conan test ../test/RESTAPICoreTestUtilities/test_package/conanfile.py RESTAPICoreTestUtilities/0.0.${TRAVIS_BUILD_NUMBER}@systelab/stable -s build_type=${CONAN_BUILD_TYPE} -s compiler.libcxx=${COMPILER_LIBCXX} -o gtest=${GTEST_VERSION} -o openssl=${OPENSSL_VERSION};
       fi
     fi
   - cd ..
