@@ -17,7 +17,7 @@ matrix:
       - CONAN_BUILD_TYPE=Release
       - COMPILER_LIBCXX=libstdc++11
       - GTEST_VERSION=1.8.1
-      - OPENSSL_VERSION=1.0.2n
+      - OPENSSL_VERSION=1.0.2s
 
   - os: linux
     dist: xenial
@@ -36,7 +36,7 @@ matrix:
       - CONAN_BUILD_TYPE=Debug
       - COMPILER_LIBCXX=libstdc++11
       - GTEST_VERSION=1.8.1
-      - OPENSSL_VERSION=1.0.2n
+      - OPENSSL_VERSION=1.0.2s
 
   - os: linux
     dist: xenial
@@ -55,7 +55,7 @@ matrix:
       - CONAN_BUILD_TYPE=Debug
       - COMPILER_LIBCXX=libstdc++11
       - GTEST_VERSION=1.8.1
-      - OPENSSL_VERSION=1.0.2n
+      - OPENSSL_VERSION=1.0.2s
 
   - os: osx
     osx_image: xcode10.1
@@ -66,7 +66,7 @@ matrix:
       - CONAN_BUILD_TYPE=Release
       - COMPILER_LIBCXX=libc++
       - GTEST_VERSION=1.8.1
-      - OPENSSL_VERSION=1.0.2n
+      - OPENSSL_VERSION=1.0.2s
 
 install: 
   - if [ $TRAVIS_OS_NAME == linux ]; then sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 90; fi
