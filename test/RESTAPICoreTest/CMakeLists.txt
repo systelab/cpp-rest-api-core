@@ -4,7 +4,13 @@ cmake_minimum_required(VERSION 3.2)
 enable_testing()
 
 # Find external dependencides
-find_package(gtest)
+set(GTEST_PACKAGE_NAME gtest)
+find_package(${GTEST_PACKAGE_NAME})
+if (NOT TARGET ${GTEST_PACKAGE_NAME}::${GTEST_PACKAGE_NAME})
+    set(GTEST_PACKAGE_NAME GTest)
+    find_package(${GTEST_PACKAGE_NAME})
+endif()
+
 find_package(WebServerAdapterTestUtilities)
 find_package(JSONAdapterTestUtilities)
 find_package(TimeAdapterTestUtilities)
@@ -17,7 +23,8 @@ set(REST_API_CORE_TEST_PROJECT RESTAPICoreTest)
 file(GLOB_RECURSE REST_API_CORE_TEST_PROJECT_SRC "*.cpp")
 file(GLOB_RECURSE REST_API_CORE_TEST_PROJECT_HDR "*.h")
 add_executable(${REST_API_CORE_TEST_PROJECT} ${REST_API_CORE_TEST_PROJECT_SRC} ${REST_API_CORE_TEST_PROJECT_HDR})
-target_link_libraries(${REST_API_CORE_TEST_PROJECT} RESTAPICore RESTAPICoreTestUtilities gtest::gtest
+target_link_libraries(${REST_API_CORE_TEST_PROJECT} RESTAPICore RESTAPICoreTestUtilities
+					  ${GTEST_PACKAGE_NAME}::${GTEST_PACKAGE_NAME}
 					  WebServerAdapterTestUtilities::WebServerAdapterTestUtilities
 					  JSONAdapterTestUtilities::JSONAdapterTestUtilities
 					  TimeAdapterTestUtilities::TimeAdapterTestUtilities)
