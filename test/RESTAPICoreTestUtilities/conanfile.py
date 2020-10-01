@@ -22,9 +22,9 @@ class RESTAPICoreTestUtilitiesConan(ConanFile):
         if self.options.gtest == "1.7.0":
             self.requires("gtest/1.7.0@systelab/stable")
         elif self.options.gtest == "1.8.1":
-            self.requires("gtest/1.8.1@bincrafters/stable")
+            self.requires("gtest/1.8.1")
         else:
-            self.requires("gtest/1.10.0@systelab/stable")
+            self.requires("gtest/1.10.0")
 
         if ("%s" % self.version) == "None":
             self.requires("RESTAPICore/%s@systelab/stable" % os.environ['VERSION'])
