@@ -134,7 +134,7 @@ script:
 
 deploy:
   provider: script
-  script: bash ./deploy.sh -v "${TRAVIS_TAG:1}"
+  script: bash ./ci/deploy.sh -v "${TRAVIS_TAG:1}"
   skip_cleanup: true  
   on:
     tags: true
