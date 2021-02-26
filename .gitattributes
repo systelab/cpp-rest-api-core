@@ -1,1 +1,4 @@
-cmake/* linguist-vendored
+*.cmake linguist-vendored
+*.txt linguist-vendored
+*.py linguist-vendored
+*.sh linguist-vendored
