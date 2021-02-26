@@ -1,0 +1,22 @@
+on:
+  repository_dispatch:
+    types: [doc-build]
+
+jobs:
+  build_docs_job:
+    runs-on: ubuntu-latest
+    name: 'Automated generation of library documentation'
+    steps:
+    - name: 'Generate library documentation'
+      id: archive-doc
+      uses: systelab/cpp-library-doc-action@master
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        owner: systelab
+        repo_name: cpp-rest-api-core
+        library_name: 'RESTAPICore CSW library'
+        tag_name: ${{ github.event.client_payload.tag }}
+        configuration_name: ${{ github.event.client_payload.configuration }}
+        ci_system: ${{ github.event.client_payload.ci }}
+        job_id: ${{ github.event.client_payload.job }}
