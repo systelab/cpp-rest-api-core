@@ -80,7 +80,7 @@ install:
   - if [ $TRAVIS_OS_NAME == linux ]; then pip install conan; fi
   - if [ $TRAVIS_OS_NAME == osx ]; then brew install conan; fi
   - conan user
-  - conan remote add systelab-bintray https://api.bintray.com/conan/systelab/conan
+  - conan remote add systelab-public https://systelab.jfrog.io/artifactory/api/conan/cpp-conan-production-local
   - conan --version
 
 script:

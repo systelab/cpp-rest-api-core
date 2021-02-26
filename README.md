@@ -34,7 +34,7 @@ def requirements(self):
 As this package is not available on the conan-center, you will also need to configure a remote repository before installing dependencies:
 
 ```bash
-conan remote add systelab-bintray https://api.bintray.com/conan/systelab/conan 
+conan remote add systelab-public https://systelab.jfrog.io/artifactory/api/conan/cpp-conan-production-local
 ```
 
 See Conan [documentation](https://docs.conan.io/en/latest/) for further details on how to integrate this package with your build system.
