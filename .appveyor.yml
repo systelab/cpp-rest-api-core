@@ -13,6 +13,7 @@ configuration:
 environment:
   global:
     PYTHON: "C:\\Python36"
+    CYG_ROOT: C:\cygwin64
 
   matrix:
   - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
@@ -56,10 +57,10 @@ after_build:
 test_script:
   - ps: cd bin
   - ps: cd $env:CONFIGURATION
-  - RESTAPICoreTest.exe --gtest_output=xml:RESTAPICoreTest.xml
+  - RESTAPICoreTest.exe --gtest_output=xml:../RESTAPICoreTest.xml
 
 after_test:
-  - ps: (new-object net.webclient).UploadFile("https://ci.appveyor.com/api/testresults/junit/$($env:APPVEYOR_JOB_ID)", (Resolve-Path .\RESTAPICoreTest.xml))
+  - ps: (new-object net.webclient).UploadFile("https://ci.appveyor.com/api/testresults/junit/$($env:APPVEYOR_JOB_ID)", (Resolve-Path ..\RESTAPICoreTest.xml))
 
 artifacts:
   - path: 'build\lib\%CONFIGURATION%\RESTAPICore.lib'
@@ -75,3 +76,4 @@ deploy_script:
       } else {
         echo "Not uploading because this is not a tag build"
       }
+  - '%CYG_ROOT%/bin/bash -lc "cd $APPVEYOR_BUILD_FOLDER; ./ci/build_docs.sh -o \"systelab\" -s \"cpp-rest-api-core\" -t \"$APPVEYOR_REPO_TAG_NAME\" -c AppVeyor -n \"$APPVEYOR_BUILD_WORKER_IMAGE %PLATFORM% %CONFIGURATION%\" -j \"$APPVEYOR_JOB_ID\" -p \"RESTAPICoreTest\"'
