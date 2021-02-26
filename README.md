@@ -1,7 +1,7 @@
 [![Build Status](https://travis-ci.org/systelab/cpp-rest-api-core.svg?branch=master)](https://travis-ci.org/systelab/cpp-rest-api-core)
 [![Build status](https://ci.appveyor.com/api/projects/status/ix9b122obt2f2j9v?svg=true)](https://ci.appveyor.com/project/systelab/cpp-rest-api-core)
 [![codecov](https://codecov.io/gh/systelab/cpp-rest-api-core/branch/master/graph/badge.svg)](https://codecov.io/gh/systelab/cpp-rest-api-core)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/8e7fca4ee7cb47a1801f51771532b2cb)](https://www.codacy.com/app/systelab/cpp-rest-api-core?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=systelab/cpp-rest-api-core&amp;utm_campaign=Badge_Grade)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/3c7b64648176416eaf66d78203c4a4d4)](https://www.codacy.com/gh/systelab/cpp-rest-api-core/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=systelab/cpp-rest-api-core&amp;utm_campaign=Badge_Grade)
 
 
 # C++ REST API framework
