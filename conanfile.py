@@ -10,8 +10,8 @@ class RESTAPICoreConan(ConanFile):
     license = "MIT"
     generators = "cmake_find_package"
     settings = "os", "compiler", "build_type", "arch"
-    options = {"gtest": ["1.7.0", "1.8.1", "1.10.0"], "openssl": ["1.0.2n", "1.0.2s", "1.1.1g"]}
-    default_options = {"gtest":"1.10.0", "openssl":"1.1.1g"}
+    options = {"gtest": ["1.7.0", "1.8.1", "1.10.0"], "openssl": ["1.0.2n", "1.0.2s", "1.1.1g", "1.1.1k"]}
+    default_options = {"gtest":"1.10.0", "openssl":"1.1.1k"}
     exports_sources = "*"
 
     def configure(self):
@@ -23,14 +23,14 @@ class RESTAPICoreConan(ConanFile):
         self.options["JWTUtils"].openssl = self.options.openssl
 
     def requirements(self):
-        self.requires("WebServerAdapterInterface/1.1.8@systelab/stable")
-        self.requires("JWTUtils/1.1.5@systelab/stable")
+        self.requires("WebServerAdapterInterface/1.1.10@systelab/stable")
+        self.requires("JWTUtils/1.1.7@systelab/stable")
         self.requires("TimeAdapter/1.0.4@systelab/stable")
 
     def build_requirements(self):
-        self.build_requires("TestUtilitiesInterface/1.0.5@systelab/stable")
-        self.build_requires("WebServerAdapterTestUtilities/1.1.8@systelab/stable")
-        self.build_requires("JSONAdapterTestUtilities/1.1.1@systelab/stable")
+        self.build_requires("TestUtilitiesInterface/1.0.7@systelab/stable")
+        self.build_requires("WebServerAdapterTestUtilities/1.1.10@systelab/stable")
+        self.build_requires("JSONAdapterTestUtilities/1.1.3@systelab/stable")
         self.build_requires("TimeAdapterTestUtilities/1.0.4@systelab/stable")
         if self.options.gtest == "1.7.0":
             self.build_requires("gtest/1.7.0@systelab/stable")
