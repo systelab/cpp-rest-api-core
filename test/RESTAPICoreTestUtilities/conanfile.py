@@ -29,9 +29,10 @@ class RESTAPICoreTestUtilitiesConan(ConanFile):
             self.requires(f"gtest/{self.options.gtest}")
 
         if ("%s" % self.version) == "None":
-            self.requires("RESTAPICore/%s@systelab/stable" % os.environ['VERSION'])
+            channel = os.environ['CHANNEL'] if "CHANNEL" in os.environ else "stable"
+            self.requires(f"RESTAPICore/{os.environ['VERSION']}@systelab/{channel}")
         else:
-            self.requires("RESTAPICore/%s@systelab/stable" % self.version)
+            self.requires(f"RESTAPICore/{self.version}@systelab/{self.channel}")
 
     def imports(self):
         self.copy("*.dll", dst="bin", src="bin")
