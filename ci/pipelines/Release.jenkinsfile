@@ -1,0 +1,121 @@
+def channel = "testing"
+def version = "0.0.0"
+
+
+library identifier: "cpp-jenkins-pipelines@master", retriever: modernSCM(
+  [$class: "GitSCMSource",
+   remote: "https://github.com/systelab/cpp-jenkins-pipelines.git",
+   credentialsId: "GitHubCredentials"])
+   
+pipeline
+{
+	agent
+	{
+		label 'lib-build'
+	}
+
+	parameters
+	{
+		string(	name: 'version',
+				description: 'Number of the version to build (must match the name of the tag that will be checked out)',
+				defaultValue: '0.0.0' )
+
+		booleanParam( name: 'stable',
+					  description: 'Show if generated library should be uploaded as stable or testing',
+					  defaultValue: false )
+	}
+
+	options
+	{
+		skipDefaultCheckout(true)
+		disableConcurrentBuilds()
+		buildDiscarder(logRotator(numToKeepStr: '5'))
+	}
+
+	stages
+	{
+		stage('Checkout')
+		{
+			steps
+			{
+				script 
+				{
+					version = params.version
+					channel = params.stable ? "stable" : "testing"
+				}
+				deleteDir()
+				configureConanRemotes()
+				checkoutSourceCodeFromTag(version)
+			}
+		}
+		
+		stage('Build')
+		{	
+			steps
+			{
+				script
+				{
+					def configurations = ['NewtonDebug', 'NewtonRelease', 'SnowDebug', 'SnowRelease']
+					for(int i=0; i < configurations.size(); i++)
+					{
+						stage('Build ' + configurations[i])
+						{
+							def props = readProperties file:"ci/pipelines/${configurations[i]}.properties"							
+							props.each { propKey, propValue -> println "${propKey}: ${propValue}" }
+
+							sh "mkdir build-${configurations[i]}"
+							dir("build-${configurations[i]}")
+							{
+								sh "conan install .. -s build_type=${props.conanBuildType} -s compiler.toolset=${props.conanCompilerToolset} -s arch=${props.conanArch} -o gtest=${props.conanGTestVersion} -o openssl=${props.conanOpenSSLVersion}"
+								sh "cmake .. -G '${props.cmakeVS}' -A ${props.cmakePlatform}"
+								sh "cmake --build . --config ${props.cmakeConfiguration}"
+								sh "conan export-pkg ../conanfile.py RESTAPICore/${version}@systelab/${channel} -s build_type=${props.conanBuildType} -s compiler.toolset=${props.conanCompilerToolset} -s arch=${props.conanArch} -o gtest=${props.conanGTestVersion} -o openssl=${props.conanOpenSSLVersion} --force"
+								sh "conan test ../test_package/conanfile.py RESTAPICore/${version}@systelab/${channel} -s build_type=${props.conanBuildType} -s compiler.toolset=${props.conanCompilerToolset} -s arch=${props.conanArch} -o gtest=${props.conanGTestVersion} -o openssl=${props.conanOpenSSLVersion}"
+								sh "bin/${props.conanBuildType}/RESTAPICoreTest.exe --gtest_output=xml:RESTAPICoreTest.xml"
+							}
+
+							dir("test/RESTAPICoreTestUtilities")
+							{
+								sh "mkdir build-${configurations[i]}"
+								dir("build-${configurations[i]}")
+								{
+									sh "conan install .. -s build_type=${props.conanBuildType} -s compiler.toolset=${props.conanCompilerToolset} -s arch=${props.conanArch} -e VERSION=${version} -e CHANNEL=${channel} -o gtest=${props.conanGTestVersion} -o openssl=${props.conanOpenSSLVersion}"
+									sh "cmake .. -G '${props.cmakeVS}' -A ${props.cmakePlatform}"
+									sh "cmake --build . --config ${props.cmakeConfiguration}"
+									sh "conan export-pkg ../conanfile.py RESTAPICoreTestUtilities/${version}@systelab/${channel} -s build_type=${props.conanBuildType} -s compiler.toolset=${props.conanCompilerToolset} -s arch=${props.conanArch} -o gtest=${props.conanGTestVersion} -o openssl=${props.conanOpenSSLVersion}"
+									sh "conan test ../test_package/conanfile.py RESTAPICoreTestUtilities/${version}@systelab/${channel} -s build_type=${props.conanBuildType} -s compiler.toolset=${props.conanCompilerToolset} -s arch=${props.conanArch} -o gtest=${props.conanGTestVersion} -o openssl=${props.conanOpenSSLVersion}"
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+		stage('Deploy')
+		{
+			steps
+			{
+				script
+				{
+					sh "conan remove RESTAPICore/${version}@systelab/${channel} -r systelab-conan-local --force"
+					sh "conan upload RESTAPICore/${version}@systelab/${channel} --all -r systelab-conan-local --force"
+					sh "conan remove RESTAPICoreTestUtilities/${version}@systelab/${channel} -r systelab-conan-local --force"
+					sh "conan upload RESTAPICoreTestUtilities/${version}@systelab/${channel} --all -r systelab-conan-local --force"
+				}
+			}
+		}	
+	}
+	
+	post
+	{
+		always
+		{
+			junit allowEmptyResults: true, testResults: "build*/RESTAPICoreTest.xml"
+			script
+			{
+				currentBuild.description = "${version}/${channel}"
+			}
+		}
+	}
+}
