@@ -1,5 +1,12 @@
 # Summary of changes
 
+## Changes for version 1.1.8 (23 Dec 2021)
+
+### Bug Fixes
+
+- Moved to version 2.0.0 of WebServerAdapter
+
+
 ## Changes for version 1.1.7 (30 Sep 2021)
 
 ### Bug Fixes
