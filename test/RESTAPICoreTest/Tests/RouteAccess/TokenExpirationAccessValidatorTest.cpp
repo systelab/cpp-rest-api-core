@@ -122,6 +122,6 @@ namespace systelab { namespace rest_api_core { namespace unit_test {
 		ASSERT_FALSE(m_validator->hasAccess(endpointRequestData));
 	}
 
-	INSTANTIATE_TEST_CASE_P(RESTAPICore, TokenExpirationAccessValidatorTest, testing::ValuesIn(testData));
+	INSTANTIATE_TEST_SUITE_P(RESTAPICore, TokenExpirationAccessValidatorTest, testing::ValuesIn(testData));
 
 }}}

@@ -96,6 +96,6 @@ namespace systelab { namespace rest_api_core { namespace unit_test {
 		ASSERT_TRUE(EntityComparator()(expectedClaims, *claims));
 	}
 
-	INSTANTIATE_TEST_CASE_P(RESTAPICore, AuthorizationDataBuilderTest, testing::ValuesIn(testData));
+	INSTANTIATE_TEST_SUITE_P(RESTAPICore, AuthorizationDataBuilderTest, testing::ValuesIn(testData));
 
 }}}
