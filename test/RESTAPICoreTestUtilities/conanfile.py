@@ -13,9 +13,6 @@ class RESTAPICoreTestUtilitiesConan(ConanFile):
     settings = "os", "compiler", "build_type", "arch"
     exports_sources = "*", "!build-*"
 
-    def configure(self):
-        self.options["RESTAPICore"].openssl = self.options.openssl
-
     def requirements(self):
         self.requires("gtest/1.14.0#4372c5aed2b4018ed9f9da3e218d18b3")
 
