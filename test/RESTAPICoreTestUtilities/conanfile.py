@@ -1,5 +1,5 @@
 import os
-from conans import ConanFile, tools
+from conans import ConanFile, tools, CMake
 
 class RESTAPICoreTestUtilitiesConan(ConanFile):
     name = "RESTAPICoreTestUtilities"
@@ -11,29 +11,24 @@ class RESTAPICoreTestUtilitiesConan(ConanFile):
     license = "MIT"
     generators = "cmake_find_package"
     settings = "os", "compiler", "build_type", "arch"
-    options = {"gtest": ["1.7.0", "1.8.1", "1.10.0"], "openssl": ["1.0.2n", "1.0.2s", "1.1.1g", "1.1.1k"]}
-    default_options = {"gtest":"1.10.0", "openssl":"1.1.1k"}
     exports_sources = "*", "!build-*"
 
     def configure(self):
-        self.options["RESTAPICore"].gtest = self.options.gtest
         self.options["RESTAPICore"].openssl = self.options.openssl
 
     def requirements(self):
-        if self.options.gtest == "1.7.0":
-            self.requires("gtest/1.7.0@systelab/stable")
-        elif self.options.gtest == "1.8.1":
-            self.requires("gtest/1.8.1")
-        elif self.options.gtest == "1.10.0":
-            self.requires("gtest/1.10.0#0c895f60b461f8fee0da53a84d659131")
-        else:
-            self.requires(f"gtest/{self.options.gtest}")
+        self.requires("gtest/1.14.0#4372c5aed2b4018ed9f9da3e218d18b3")
 
         if ("%s" % self.version) == "None":
             channel = os.environ['CHANNEL'] if "CHANNEL" in os.environ else "stable"
             self.requires(f"RESTAPICore/{os.environ['VERSION']}@systelab/{channel}")
         else:
             self.requires(f"RESTAPICore/{self.version}@systelab/{self.channel}")
+
+    def build(self):
+        cmake = CMake(self)
+        cmake.configure()
+        cmake.build()
 
     def imports(self):
         self.copy("*.dll", dst="bin", src="bin")
