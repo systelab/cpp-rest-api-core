@@ -6,7 +6,7 @@ def configs = ['Debug', 'Release']
 
 library identifier: "cpp-jenkins-pipelines@master", retriever: modernSCM(
   [$class: "GitSCMSource",
-   remote: "https://github.com/systelab/cpp-jenkins-pipelines.git")
+   remote: "https://github.com/systelab/cpp-jenkins-pipelines.git"])
    
 pipeline
 {
