@@ -6,8 +6,7 @@ def configs = ['Debug', 'Release']
 
 library identifier: "cpp-jenkins-pipelines@master", retriever: modernSCM(
   [$class: "GitSCMSource",
-   remote: "https://github.com/systelab/cpp-jenkins-pipelines.git",
-   credentialsId: "GitHubCredentials"])
+   remote: "https://github.com/systelab/cpp-jenkins-pipelines.git")
    
 pipeline
 {
@@ -98,7 +97,7 @@ pipeline
 	{
 		always
 		{
-			junit allowEmptyResults: true, testResults: "build*/RESTAPICoreTest.xml"
+			junit allowEmptyResults: true, testResults: "build/**/RESTAPICoreTest.xml"
 			script
 			{
 				currentBuild.description = "${version}/${channel}"
