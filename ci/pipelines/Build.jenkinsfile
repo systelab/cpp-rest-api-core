@@ -60,8 +60,10 @@ pipeline
 									bat "conan test ./test_package/conanfile.py RESTAPICore/${version}@systelab/${channel} --profile=${profile} -s arch=${arch} -s build_type=${config}"
 									bat "conan export-pkg ./test/RESTAPICoreTestUtilities/conanfile.py RESTAPICoreTestUtilities/${version}@systelab/${channel} --build-folder ${buildFolder} --force"
 									bat "conan test ./test/RESTAPICoreTestUtilities/test_package/conanfile.py RESTAPICoreTestUtilities/${version}@systelab/${channel} --profile=${profile} -s arch=${arch} -s build_type=${config}"
-									bat "JWTUtilsTest.exe --gtest_output=xml:JWTUtilsTest.xml"
-									bat "${buildFolder}/bin/${config}/RESTAPICoreTest.exe --gtest_output=xml:JWTUtilsTest.xml"
+									dir("${buildFolder}/bin/${config}")
+									{
+										bat "RESTAPICoreTest.exe --gtest_output=xml:JWTUtilsTest.xml"
+									}
 							}
 						}
 					}
