@@ -71,7 +71,7 @@ pipeline
 									bat "conan test ./test/RESTAPICoreTestUtilities/test_package/conanfile.py RESTAPICoreTestUtilities/${version}@systelab/${channel} --profile=${profile} -s arch=${arch} -s build_type=${config}"
 									dir("${buildFolder}/bin/${config}")
 									{
-										bat "RESTAPICoreTest.exe --gtest_output=xml:JWTUtilsTest.xml"
+										bat "RESTAPICoreTest.exe --gtest_output=xml:RESTAPICoreTest.xml"
 									}
 							}
 						}
