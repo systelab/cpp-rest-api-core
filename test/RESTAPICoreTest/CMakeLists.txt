@@ -28,7 +28,8 @@ target_link_libraries(${REST_API_CORE_TEST_PROJECT} RESTAPICore RESTAPICoreTestU
 					  WebServerAdapterTestUtilities::WebServerAdapterTestUtilities
 					  JSONAdapterTestUtilities::JSONAdapterTestUtilities
 					  TimeAdapterTestUtilities::TimeAdapterTestUtilities)
-
+					  
+target_include_directories(${REST_API_CORE_TEST_PROJECT} PRIVATE ${JSONAdapterTestUtilities_INCLUDE_DIRS})
 #Configure source groups
 foreach(FILE ${REST_API_CORE_TEST_PROJECT_SRC} ${REST_API_CORE_TEST_PROJECT_HDR}) 
     get_filename_component(PARENT_DIR "${FILE}" DIRECTORY)

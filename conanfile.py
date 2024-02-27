@@ -10,41 +10,25 @@ class RESTAPICoreConan(ConanFile):
     license = "MIT"
     generators = "cmake_find_package"
     settings = "os", "compiler", "build_type", "arch"
-    options = {"gtest": ["1.7.0", "1.8.1", "1.10.0"], "openssl": ["1.0.2n", "1.0.2s", "1.1.1g", "1.1.1k"]}
-    default_options = {"gtest":"1.10.0", "openssl":"1.1.1k"}
     exports_sources = "*", "!test/RESTAPICoreTestUtilities", "!build-*", "!*.yml", "!*.md", "!*.in", "!ci", "!.gitattributes", "!.gitignore", "!LICENSE"
 
     def configure(self):
-        self.options["WebServerAdapterTestUtilities"].gtest = self.options.gtest
-        self.options["JSONAdapterTestUtilities"].gtest = self.options.gtest
-        self.options["TimeAdapter"].gtest = self.options.gtest
-        self.options["TimeAdapterTestUtilities"].gtest = self.options.gtest
-        self.options["JWTUtils"].gtest = self.options.gtest
-        self.options["JWTUtils"].openssl = self.options.openssl
+        self.options["openssl"].shared = True
 
     def requirements(self):
-        self.requires("WebServerAdapterInterface/2.0.1@systelab/stable")
-        self.requires("JWTUtils/1.1.9@systelab/stable")
-        self.requires("TimeAdapter/1.0.5@systelab/stable")
+        self.requires("WebServerAdapterInterface/2.0.2@systelab/stable")
+        self.requires("JWTUtils/1.1.10@systelab/stable")
+        self.requires("TimeAdapter/1.0.6@systelab/stable")
 
-    def build_requirements(self):
-        self.build_requires("TestUtilitiesInterface/1.0.8@systelab/stable")
-        self.build_requires("WebServerAdapterTestUtilities/2.0.1@systelab/stable")
-        self.build_requires("JSONAdapterTestUtilities/1.1.5@systelab/stable")
-        self.build_requires("TimeAdapterTestUtilities/1.0.5@systelab/stable")
-
-        if self.options.gtest == "1.7.0":
-            self.build_requires("gtest/1.7.0@systelab/stable")
-        elif self.options.gtest == "1.8.1":
-            self.build_requires("gtest/1.8.1")
-        elif self.options.gtest == "1.10.0":
-            self.build_requires("gtest/1.10.0#0c895f60b461f8fee0da53a84d659131")
-        else:
-            self.build_requires(f"gtest/{self.options.gtest}")
+        self.requires("gtest/1.14.0#4372c5aed2b4018ed9f9da3e218d18b3", override=True) # Hack
+        self.requires("TestUtilitiesInterface/1.0.8@systelab/stable", private=True)
+        self.requires("WebServerAdapterTestUtilities/2.0.2@systelab/stable", private=True)
+        self.requires("JSONAdapterTestUtilities/1.1.5@systelab/stable", private=True)
+        self.requires("TimeAdapterTestUtilities/1.0.6@systelab/stable", private=True)
 
     def build(self):
         cmake = CMake(self)
-        cmake.configure(source_folder=".")
+        cmake.configure()
         cmake.build()
 
     def imports(self):
