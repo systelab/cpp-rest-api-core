@@ -25,7 +25,7 @@ In order to build the application on Windows for the `Release` configuration, ru
 > md build && cd build
 > conan remote add systelab-public https://systelab.jfrog.io/artifactory/api/conan/cpp-conan-production-local
 > conan install . --profile=vs2022.conanprofile -s build_type=Release -s arch=x86_64 --install-folder build/Release_x64
-> conan build . -bf build/Release_x64
+> conan build . --build-folder build/Release_x64
 ```
 
 However, if you want to `Debug` the source code, you will need these commands:
@@ -35,7 +35,7 @@ However, if you want to `Debug` the source code, you will need these commands:
 > md build && cd build
 > conan remote add systelab-public https://systelab.jfrog.io/artifactory/api/conan/cpp-conan-production-local
 > conan install . --profile=vs2022.conanprofile -s build_type=Debug -s arch=x86_64 --install-folder build/Debug_x64
-> conan build . -bf build/Debug_x64
+> conan build . --build-folder build/Debug_x64
 ```
 
 ### Linux
