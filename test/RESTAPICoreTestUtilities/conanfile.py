@@ -11,7 +11,7 @@ class RESTAPICoreTestUtilitiesConan(ConanFile):
     license = "MIT"
     generators = "cmake_find_package"
     settings = "os", "compiler", "build_type", "arch"
-    exports_sources = "*", "!build-*"
+    exports_sources = "*", "!build*", "!*.yml", "!*.md", "!*.in", "!ci", "!.gitattributes", "!.gitignore", "!LICENSE"
 
     def requirements(self):
         self.requires("gtest/1.14.0#4372c5aed2b4018ed9f9da3e218d18b3")

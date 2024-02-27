@@ -10,7 +10,7 @@ class RESTAPICoreConan(ConanFile):
     license = "MIT"
     generators = "cmake_find_package"
     settings = "os", "compiler", "build_type", "arch"
-    exports_sources = "*", "!test/RESTAPICoreTestUtilities", "!build-*", "!*.yml", "!*.md", "!*.in", "!ci", "!.gitattributes", "!.gitignore", "!LICENSE"
+    exports_sources = "*", "!test/RESTAPICoreTestUtilities", "!build*", "!*.yml", "!*.md", "!*.in", "!ci", "!.gitattributes", "!.gitignore", "!LICENSE"
 
     def configure(self):
         self.options["openssl"].shared = True
