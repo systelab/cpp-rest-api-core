@@ -1,12 +1,17 @@
 def channel = "testing"
 def version = "0.0.0"
 def profile = "vs2022.conanprofile"
+def packageNameInterface = "RESTAPICore"
+def packageNameTestUtilities = "RESTAPICoreTestUtilities"
 def archs = ['x86', 'x86_64']
 def configs = ['Debug', 'Release']
 
-library identifier: "cpp-jenkins-pipelines@master", retriever: modernSCM(
-  [$class: "GitSCMSource",
-   remote: "https://github.com/systelab/cpp-jenkins-pipelines.git"])
+library identifier: "jenkins-pipeline-utils@1.0.11",
+ 		retriever: modernSCM([
+ 			$class: "GitSCMSource",
+ 			remote: "https://bitbucket.org/Systelab/jenkins-pipeline-utils.git",
+ 			credentialsId: "BitbucketWerfen"
+ 		])
    
 pipeline
 {
@@ -17,9 +22,18 @@ pipeline
 
 	parameters
 	{
-		booleanParam( name: 'uploadTestingPkg',
-					  description: 'Whether or not to upload testing conan package',
-					  defaultValue: false )
+		string(	name: 'tag',
+ 				description: 'Version to build (must match the version of the tag that will be checked out), leave blank for checkout of current branch',
+ 				defaultValue: '',
+ 				trim: true)
+ 
+ 		booleanParam( name: 'stable',
+ 					  description: 'Show if generated library should be uploaded as stable or testing',
+ 					  defaultValue: false )
+ 		
+ 		booleanParam( name: 'uploadPackage',
+ 					  description: 'Whether or not to upload conan package',
+ 					  defaultValue: false )
 	}
 
 	options
@@ -35,8 +49,20 @@ pipeline
 		{
 			steps
 			{
-				deleteDir()
-				checkoutSourceCode()
+				cleanupWorkspace()
+ 				script 
+ 				{
+ 					if (params.tag == '')
+ 					{
+ 						checkoutFromGIT()
+ 					}
+ 					else
+ 					{
+ 						version = params.tag
+ 						checkoutFromGIT(scm.userRemoteConfigs[0].url, "v${version}", true)
+ 					}
+ 					channel = params.stable ? "stable" : "testing"
+ 				}
 			}
 		}
 		
@@ -53,17 +79,33 @@ pipeline
 								stage("Build ${config}|${arch}")
 								{
 									def buildFolder = "build/${config}-${arch}"
-									bat "conan install . --install-folder ${buildFolder} --profile=${profile} -s arch=${arch} -s build_type=${config}"
-									bat "conan build . --build-folder ${buildFolder}" 
-									bat "conan export-pkg . RESTAPICore/${version}@systelab/${channel} --build-folder ${buildFolder} --force"
-									bat "conan test ./test_package/conanfile.py RESTAPICore/${version}@systelab/${channel} --profile=${profile} -s arch=${arch} -s build_type=${config}"
-									bat "conan export-pkg ./test/RESTAPICoreTestUtilities/conanfile.py RESTAPICoreTestUtilities/${version}@systelab/${channel} --build-folder ${buildFolder} --force"
-									bat "conan test ./test/RESTAPICoreTestUtilities/test_package/conanfile.py RESTAPICoreTestUtilities/${version}@systelab/${channel} --profile=${profile} -s arch=${arch} -s build_type=${config}"
+									bat script: "conan install . --install-folder ${buildFolder} --profile=${profile} -s arch=${arch} -s build_type=${config}", label: 'Installing dependencies'
+									bat script: "conan build . --build-folder ${buildFolder}", label: 'Building'		
+									bat script: "conan export-pkg . ${packageNameInterface}/${version}@systelab/${channel} --build-folder ${buildFolder} --force", label: "Exporting package ${packageNameInterface}/${version}@systelab/${channel}"
+									bat script: "conan export-pkg ./test/${packageNameTestUtilities}/conanfile.py ${packageNameTestUtilities}/${version}@systelab/${channel} --build-folder ${buildFolder} --force", label: "Exporting package ${packageNameTestUtilities}/${version}@systelab/${channel}"
 									dir("${buildFolder}/bin/${config}")
 									{
 										bat "RESTAPICoreTest.exe --gtest_output=xml:RESTAPICoreTest.xml"
 									}
 							}
+						}
+					}
+				}
+			}
+		}
+		
+		stage('Test Packages')
+		{
+			steps
+			{
+				script
+				{
+					archs.each
+					{ arch ->
+						configs.each
+						{ config ->
+							bat script: "conan test test_package/conanfile.py ${packageNameInterface}/${version}@systelab/${channel} --profile=${profile} -s arch=${arch} -s build_type=${config}"
+							bat script: "conan test test/${packageNameTestUtilities}/test_package/conanfile.py ${packageNameTestUtilities}/${version}@systelab/${channel} --profile=${profile} -s arch=${arch} -s build_type=${config}"
 						}
 					}
 				}
@@ -79,8 +121,8 @@ pipeline
 			steps
 			{
 
-				bat "conan upload RESTAPICore/${version}@systelab/${channel} --all -r systelab-conan-local --force"
-				bat "conan upload RESTAPICoreTestUtilities/${version}@systelab/${channel} --all -r systelab-conan-local --force"
+				bat script: "conan upload ${packageNameInterface}/${version}@systelab/${channel} --all -r systelab-conan-local --force", label: "Uploading ${packageNameInterface} package to Artifactory"
+				bat script: "conan upload ${packageNameTestUtilities}/${version}@systelab/${channel} --all -r systelab-conan-local --force", label: "Uploading ${packageNameTestUtilities} package to Artifactory"
 			}
 		}	
 	}
