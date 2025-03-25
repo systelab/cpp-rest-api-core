@@ -104,8 +104,8 @@ pipeline
 					{ arch ->
 						configs.each
 						{ config ->
-							bat script: "conan test test_package/conanfile.py ${packageNameInterface}/${version}@systelab/${channel} --profile=${profile} -s arch=${arch} -s build_type=${config}"
-							bat script: "conan test test/${packageNameTestUtilities}/test_package/conanfile.py ${packageNameTestUtilities}/${version}@systelab/${channel} --profile=${profile} -s arch=${arch} -s build_type=${config}"
+							bat script: "conan test test_package/conanfile.py ${packageNameInterface}/${version}@systelab/${channel} --profile=${profile} -s arch=${arch} -s build_type=${config}", label: "Testing test_package for ${packageNameInterface}"
+							bat script: "conan test test/${packageNameTestUtilities}/test_package/conanfile.py ${packageNameTestUtilities}/${version}@systelab/${channel} --profile=${profile} -s arch=${arch} -s build_type=${config}", label: "Testing test_package for ${packageNameTestUtilities}"
 						}
 					}
 				}
