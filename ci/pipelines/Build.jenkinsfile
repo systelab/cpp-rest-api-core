@@ -116,7 +116,7 @@ pipeline
 		{
 			when
 			{
-				expression { params.uploadTestingPkg }
+				expression { params.uploadPackage }
 			}
 			steps
 			{
