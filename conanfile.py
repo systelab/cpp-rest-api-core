@@ -12,18 +12,16 @@ class RESTAPICoreConan(ConanFile):
     settings = "os", "compiler", "build_type", "arch"
     exports_sources = "*", "!test/RESTAPICoreTestUtilities", "!build*", "!*.yml", "!*.md", "!*.in", "!ci", "!.gitattributes", "!.gitignore", "!LICENSE"
 
-    def configure(self):
-        self.options["openssl"].shared = True
-
     def requirements(self):
         self.requires("WebServerAdapterInterface/2.0.2@systelab/stable")
-        self.requires("JWTUtils/1.2.0@systelab/stable")
+        self.requires("JWTUtils/1.2.1@systelab/stable")
         self.requires("TimeAdapter/1.0.6@systelab/stable")
 
         self.requires("gtest/1.14.0#4372c5aed2b4018ed9f9da3e218d18b3", override=True) # Hack
+        self.requires("RapidJSONAdapter/1.1.7@systelab/stable", override=True)
         self.requires("TestUtilitiesInterface/1.0.8@systelab/stable", private=True)
         self.requires("WebServerAdapterTestUtilities/2.0.2@systelab/stable", private=True)
-        self.requires("JSONAdapterTestUtilities/1.1.5@systelab/stable", private=True)
+        self.requires("JSONAdapterTestUtilities/1.1.6@systelab/stable", private=True)
         self.requires("TimeAdapterTestUtilities/1.0.6@systelab/stable", private=True)
 
     def build(self):

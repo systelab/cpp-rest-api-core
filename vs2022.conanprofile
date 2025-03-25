@@ -5,7 +5,5 @@ compiler=Visual Studio
 compiler.version=17
 compiler.toolset=v143
 
-JSONAdapterTestUtilities:compiler.version=16
-JSONAdapterTestUtilities:compiler.toolset=v142
-RapidJSONAdapter:compiler.version=16
-RapidJSONAdapter:compiler.toolset=v142
+[options]
+openssl:shared=True
