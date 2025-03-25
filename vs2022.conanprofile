@@ -4,3 +4,6 @@ os_build=Windows
 compiler=Visual Studio
 compiler.version=17
 compiler.toolset=v143
+
+[options]
+openssl:shared=True
