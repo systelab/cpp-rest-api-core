@@ -17,8 +17,7 @@ class RESTAPICoreTestUtilitiesConan(ConanFile):
         self.requires("gtest/1.14.0#4372c5aed2b4018ed9f9da3e218d18b3")
 
         if ("%s" % self.version) == "None":
-            channel = os.environ['CHANNEL'] if "CHANNEL" in os.environ else "stable"
-            self.requires(f"RESTAPICore/{os.environ['VERSION']}@systelab/{channel}")
+            self.requires(f"RESTAPICore/{os.environ['VERSION']}@systelab/{os.environ['CHANNEL']}")
         else:
             self.requires(f"RESTAPICore/{self.version}@systelab/{self.channel}")
 
