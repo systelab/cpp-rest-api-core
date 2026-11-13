@@ -1,20 +1,29 @@
-from conans import ConanFile, CMake
+import os
+from conan import ConanFile
+from conan.tools.build import can_run
+from conan.tools.cmake import CMake, CMakeDeps, CMakeToolchain, cmake_layout
 
 
 class RESTAPICoreTestConan(ConanFile):
     settings = "os", "compiler", "build_type", "arch"
-    generators = "cmake_find_package"
+    test_type = "explicit"
+
+    def requirements(self):
+        self.requires(self.tested_reference_str)
+
+    def layout(self):
+        cmake_layout(self)
+
+    def generate(self):
+        CMakeDeps(self).generate()
+        CMakeToolchain(self).generate()
 
     def build(self):
         cmake = CMake(self)
         cmake.configure()
         cmake.build()
 
-    def imports(self):
-        self.copy("*.dll", dst=("bin/%s" % self.settings.build_type), src="bin")
-        self.copy("*.dylib*", dst=("bin/%s" % self.settings.build_type), src="lib")
-        self.copy('*.so*', dst=("bin/%s" % self.settings.build_type), src='lib')
-
     def test(self):
-        cmake = CMake(self)
-        cmake.test()
+        if can_run(self):
+            cmake = CMake(self)
+            cmake.ctest(cli_args=["-C", str(self.settings.build_type)])

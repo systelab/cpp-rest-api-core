@@ -1,41 +1,45 @@
 import os
-from conans import ConanFile, tools, CMake
+from conan import ConanFile
+from conan.tools.files import copy
+
+required_conan_version = ">=2.0.0"
+
 
 class RESTAPICoreTestUtilitiesConan(ConanFile):
-    name = "RESTAPICoreTestUtilities"
+    name = "rest-api-core-test-utilities"
     description = "Test utilities for C++ REST API framework"
     url = "https://github.com/systelab/cpp-rest-api-core"
     homepage = "https://github.com/systelab/cpp-rest-api-core"
     author = "CSW <csw@werfen.com>"
     topics = ("conan", "rest", "api", "framework", "test", "utilities")
     license = "MIT"
-    generators = "cmake_find_package"
+    package_type = "static-library"
     settings = "os", "compiler", "build_type", "arch"
-    exports_sources = "*", "!build*", "!*.yml", "!*.md", "!*.in", "!ci", "!.gitattributes", "!.gitignore", "!LICENSE"
+    exports_sources = "CMakeLists.txt", "stdafx.h", "Builders/*", "Comparators/*", "Mocks/*", "Stubs/*"
 
     def requirements(self):
-        self.requires("gtest/1.14.0#4372c5aed2b4018ed9f9da3e218d18b3")
+        self.requires("gtest/1.14.0")
 
-        if ("%s" % self.version) == "None":
-            self.requires(f"RESTAPICore/{os.environ['VERSION']}@systelab/{os.environ['CHANNEL']}")
+        if self.version is None:
+            self.requires(f"rest-api-core/{os.environ['VERSION']}")
         else:
-            self.requires(f"RESTAPICore/{self.version}@systelab/{self.channel}")
+            self.requires(f"rest-api-core/{self.version}")
 
-    def build(self):
-        cmake = CMake(self)
-        cmake.configure()
-        cmake.build()
-
-    def imports(self):
-        self.copy("*.dll", dst="bin", src="bin")
-        self.copy("*.dylib*", dst="bin", src="lib")
-        self.copy("*.so*", dst="bin", src="lib")
+    def layout(self):
+        # Binaries are built by the root recipe
+        self.folders.build = os.path.join("..", "..", "build", str(self.settings.arch))
 
     def package(self):
-        self.copy("*.h", dst="include/RESTAPICoreTestUtilities", keep_path=True)
-        self.copy("*RESTAPICoreTestUtilities.lib", dst="lib", keep_path=False)
-        self.copy("*RESTAPICoreTestUtilities.pdb", dst="lib", keep_path=False)
-        self.copy("*RESTAPICoreTestUtilities.a", dst="lib", keep_path=False)
+        if self.settings.os == "Windows":
+            libs_folder = os.path.join(self.build_folder, "lib", str(self.settings.build_type))
+        else:
+            libs_folder = os.path.join(self.build_folder, "lib")
+        copy(self, "*.h", self.source_folder, os.path.join(self.package_folder, "include", "RESTAPICoreTestUtilities"), excludes="test_package/*")
+        copy(self, "*RESTAPICoreTestUtilities.lib", libs_folder, os.path.join(self.package_folder, "lib"), keep_path=False)
+        copy(self, "*RESTAPICoreTestUtilities.pdb", libs_folder, os.path.join(self.package_folder, "lib"), keep_path=False)
+        copy(self, "*RESTAPICoreTestUtilities.a", libs_folder, os.path.join(self.package_folder, "lib"), keep_path=False)
 
     def package_info(self):
-        self.cpp_info.libs = tools.collect_libs(self)
+        self.cpp_info.set_property("cmake_file_name", "RESTAPICoreTestUtilities")
+        self.cpp_info.set_property("cmake_target_name", "RESTAPICoreTestUtilities::RESTAPICoreTestUtilities")
+        self.cpp_info.libs = ["RESTAPICoreTestUtilities"]
