@@ -11,7 +11,7 @@ if (NOT TARGET ${GTEST_PACKAGE_NAME}::${GTEST_PACKAGE_NAME})
     find_package(${GTEST_PACKAGE_NAME})
 endif()
 
-find_package(TestUtilitiesInterface)
+find_package(test-utilities-interface)
 
 # Configure test project
 set(REST_API_CORE_TEST_UTILITIES_PROJECT RESTAPICoreTestUtilities)
@@ -37,7 +37,7 @@ add_library(${REST_API_CORE_TEST_UTILITIES_PROJECT} STATIC ${REST_API_CORE_TEST_
 target_link_libraries(${REST_API_CORE_TEST_UTILITIES_PROJECT}
 					  RESTAPICore
 					  ${GTEST_PACKAGE_NAME}::${GTEST_PACKAGE_NAME}
-					  TestUtilitiesInterface::TestUtilitiesInterface)
+					  test-utilities-interface::test-utilities-interface)
 
 #Configure source groups
 foreach(FILE ${REST_API_CORE_TEST_UTILITIES_PROJECT_SRC} ${REST_API_CORE_TEST_UTILITIES_PROJECT_HDR}) 

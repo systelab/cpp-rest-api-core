@@ -21,6 +21,7 @@ class RESTAPICoreConan(ConanFile):
         self.requires("web-server-adapter-interface/2.0.3")
         self.requires("jwt-utils/1.2.5")
         self.requires("time-adapter/1.0.7")
+        self.requires("rapidjson-adapter/1.2.1")
 
     def build_requirements(self):
         self.test_requires("gtest/1.14.0")
@@ -30,8 +31,8 @@ class RESTAPICoreConan(ConanFile):
         self.test_requires("time-adapter-test-utilities/1.0.7")
 
     def layout(self):
+        self.folders.build_folder_vars = ["settings.arch", "settings.build_type"]
         cmake_layout(self)
-        self.folders.build_folder_vars = ["settings.arch"]
 
     def generate(self):
         CMakeDeps(self).generate()

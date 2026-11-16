@@ -3,7 +3,8 @@ cmake_minimum_required(VERSION 3.2)
 # Find external dependencides
 find_package(WebServerAdapterInterface)
 find_package(JWTUtils)
-find_package(TimeAdapter)
+find_package(time-adapter)
+find_package(rapidjson-adapter)
 
 # Add project folder into includes
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -15,7 +16,8 @@ file(GLOB_RECURSE REST_API_CORE_HDR "*.h")
 add_library(${REST_API_CORE} STATIC ${REST_API_CORE_SRC} ${REST_API_CORE_HDR})
 target_link_libraries(${REST_API_CORE} WebServerAdapterInterface::WebServerAdapterInterface
                                        JWTUtils::JWTUtils
-                                       TimeAdapter::TimeAdapter)
+                                       rapidjson-adapter::rapidjson-adapter
+                                       time-adapter::time-adapter)
 
 #Configure source groups
 foreach(FILE ${REST_API_CORE_SRC} ${REST_API_CORE_HDR}) 

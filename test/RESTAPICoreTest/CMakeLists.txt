@@ -13,7 +13,7 @@ endif()
 
 find_package(WebServerAdapterTestUtilities)
 find_package(JSONAdapterTestUtilities)
-find_package(TimeAdapterTestUtilities)
+find_package(time-adapter-test-utilities)
 
 # Add project folder into includes
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -27,7 +27,7 @@ target_link_libraries(${REST_API_CORE_TEST_PROJECT} RESTAPICore RESTAPICoreTestU
 					  ${GTEST_PACKAGE_NAME}::${GTEST_PACKAGE_NAME}
 					  WebServerAdapterTestUtilities::WebServerAdapterTestUtilities
 					  JSONAdapterTestUtilities::JSONAdapterTestUtilities
-					  TimeAdapterTestUtilities::TimeAdapterTestUtilities)
+					  time-adapter-test-utilities::time-adapter-test-utilities)
 					  
 target_include_directories(${REST_API_CORE_TEST_PROJECT} PRIVATE ${JSONAdapterTestUtilities_INCLUDE_DIRS})
 #Configure source groups
