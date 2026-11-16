@@ -15,7 +15,11 @@ class RESTAPICoreConan(ConanFile):
     license = "MIT"
     package_type = "static-library"
     settings = "os", "compiler", "build_type", "arch"
-    exports_sources = "CMakeLists.txt", "src/*", "test/*"
+
+    def export_sources(self):
+        copy(self, "CMakeLists.txt", self.recipe_folder, self.export_sources_folder)
+        copy(self, "src/*", self.recipe_folder, self.export_sources_folder)
+        copy(self, "test/*", self.recipe_folder, self.export_sources_folder, excludes=["*/build/*"])
 
     def requirements(self):
         self.requires("web-server-adapter-interface/2.0.3", transitive_headers=True)
