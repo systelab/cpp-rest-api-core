@@ -27,7 +27,7 @@ class RESTAPICoreTestUtilitiesConan(ConanFile):
 
     def layout(self):
         # Binaries are built by the root recipe
-        self.folders.build = os.path.join("..", "..", "build", str(self.settings.arch))
+        self.folders.build = os.path.join("..", "..", "build", f"{self.settings.arch}-{str(self.settings.build_type).lower()}")
 
     def package(self):
         if self.settings.os == "Windows":

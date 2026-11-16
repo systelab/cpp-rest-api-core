@@ -2,6 +2,7 @@ def version = "0.0.0"
 def profile = "vs2022.conanprofile"
 def packageNameInterface = "rest-api-core"
 def packageNameTestUtilities = "rest-api-core-test-utilities"
+def folderTestUtilities = "RESTAPICoreTestUtilities"
 def archs = ['x86', 'x86_64']
 def configs = ['Debug', 'Release']
 
@@ -76,11 +77,11 @@ pipeline
 							{ config ->
 								stage("Build ${config}|${arch}")
 								{
-									def buildFolder = "build/${arch}"
+									def buildFolder = "build/${arch}-${config.toLowerCase()}"
 									bat script: "conan install . --profile:all=${profile} -s:a arch=${arch} -s:a build_type=${config}", label: 'Installing dependencies'
 									bat script: "conan build . --profile:all=${profile} -s:a arch=${arch} -s:a build_type=${config}", label: 'Building'
 									bat script: "conan export-pkg . --name=${packageNameInterface} --version=${version} --profile:all=${profile} -s:a arch=${arch} -s:a build_type=${config}", label: "Exporting package ${packageNameInterface}/${version}"
-									bat script: "conan export-pkg ./test/${packageNameTestUtilities}/conanfile.py --name=${packageNameTestUtilities} --version=${version} --profile:all=${profile} -s:a arch=${arch} -s:a build_type=${config}", label: "Exporting package ${packageNameTestUtilities}/${version}"
+									bat script: "conan export-pkg ./test/${folderTestUtilities}/conanfile.py --name=${packageNameTestUtilities} --version=${version} --profile:all=${profile} -s:a arch=${arch} -s:a build_type=${config}", label: "Exporting package ${packageNameTestUtilities}/${version}"
 									dir("${buildFolder}/bin/${config}")
 									{
 										bat "RESTAPICoreTest.exe --gtest_output=xml:RESTAPICoreTest.xml"
@@ -103,7 +104,7 @@ pipeline
 						configs.each
 						{ config ->
 							bat script: "conan test test_package/conanfile.py ${packageNameInterface}/${version} --profile:all=${profile} -s:a arch=${arch} -s:a build_type=${config}", label: "Testing test_package for ${packageNameInterface}"
-							bat script: "conan test test/${packageNameTestUtilities}/test_package/conanfile.py ${packageNameTestUtilities}/${version} --profile:all=${profile} -s:a arch=${arch} -s:a build_type=${config}", label: "Testing test_package for ${packageNameTestUtilities}"
+							bat script: "conan test test/${folderTestUtilities}/test_package/conanfile.py ${packageNameTestUtilities}/${version} --profile:all=${profile} -s:a arch=${arch} -s:a build_type=${config}", label: "Testing test_package for ${packageNameTestUtilities}"
 						}
 					}
 				}
