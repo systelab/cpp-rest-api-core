@@ -12,11 +12,13 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 # Find external dependencies
 find_package(RESTAPICore)
+find_package(WebServerAdapterInterface)
 
 # Configure test package project
 set(REST_API_CORE_PACKAGE_TEST_PROJECT RESTAPICorePackageTest)
 add_executable(${REST_API_CORE_PACKAGE_TEST_PROJECT} RESTAPICoreExample.cpp)
-target_link_libraries(${REST_API_CORE_PACKAGE_TEST_PROJECT} RESTAPICore::RESTAPICore)
+target_link_libraries(${REST_API_CORE_PACKAGE_TEST_PROJECT} RESTAPICore::RESTAPICore
+                                                            WebServerAdapterInterface::WebServerAdapterInterface)
 
 # Register tests
 enable_testing()

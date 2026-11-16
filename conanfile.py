@@ -65,3 +65,9 @@ class RESTAPICoreConan(ConanFile):
         self.cpp_info.set_property("cmake_file_name", "RESTAPICore")
         self.cpp_info.set_property("cmake_target_name", "RESTAPICore::RESTAPICore")
         self.cpp_info.libs = ["RESTAPICore"]
+        self.cpp_info.requires = [
+            "web-server-adapter-interface::web-server-adapter-interface",
+            "jwt-utils::jwt-utils",
+            "time-adapter::time-adapter",
+            "rapidjson-adapter::rapidjson-adapter",
+        ]

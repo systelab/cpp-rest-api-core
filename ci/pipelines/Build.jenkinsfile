@@ -79,8 +79,8 @@ pipeline
 									def buildFolder = "build/${arch}"
 									bat script: "conan install . --profile:all=${profile} -s:a arch=${arch} -s:a build_type=${config}", label: 'Installing dependencies'
 									bat script: "conan build . --profile:all=${profile} -s:a arch=${arch} -s:a build_type=${config}", label: 'Building'
-									bat script: "conan export-pkg . --name=${packageNameInterface} --version=${version} --profile:all=${profile} -s:a arch=${arch} -s:a build_type=${config} --force", label: "Exporting package ${packageNameInterface}/${version}"
-									bat script: "conan export-pkg ./test/${packageNameTestUtilities}/conanfile.py --name=${packageNameTestUtilities} --version=${version} --profile:all=${profile} -s:a arch=${arch} -s:a build_type=${config} --force", label: "Exporting package ${packageNameTestUtilities}/${version}"
+									bat script: "conan export-pkg . --name=${packageNameInterface} --version=${version} --profile:all=${profile} -s:a arch=${arch} -s:a build_type=${config}", label: "Exporting package ${packageNameInterface}/${version}"
+									bat script: "conan export-pkg ./test/${packageNameTestUtilities}/conanfile.py --name=${packageNameTestUtilities} --version=${version} --profile:all=${profile} -s:a arch=${arch} -s:a build_type=${config}", label: "Exporting package ${packageNameTestUtilities}/${version}"
 									dir("${buildFolder}/bin/${config}")
 									{
 										bat "RESTAPICoreTest.exe --gtest_output=xml:RESTAPICoreTest.xml"

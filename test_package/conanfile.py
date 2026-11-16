@@ -10,6 +10,7 @@ class RESTAPICoreTestConan(ConanFile):
 
     def requirements(self):
         self.requires(self.tested_reference_str)
+        self.requires("web-server-adapter-interface/2.0.3")
 
     def layout(self):
         cmake_layout(self)
