@@ -18,7 +18,7 @@ class RESTAPICoreConan(ConanFile):
     exports_sources = "CMakeLists.txt", "src/*", "test/*"
 
     def requirements(self):
-        self.requires("web-server-adapter-interface/2.0.3")
+        self.requires("web-server-adapter-interface/2.0.3", transitive_headers=True)
         self.requires("jwt-utils/1.2.5")
         self.requires("time-adapter/1.0.7")
         self.requires("rapidjson-adapter/1.2.1")

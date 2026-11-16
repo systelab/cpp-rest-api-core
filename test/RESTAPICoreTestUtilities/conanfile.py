@@ -18,12 +18,12 @@ class RESTAPICoreTestUtilitiesConan(ConanFile):
     exports_sources = "CMakeLists.txt", "stdafx.h", "Builders/*", "Comparators/*", "Mocks/*", "Stubs/*"
 
     def requirements(self):
-        self.requires("gtest/1.14.0")
+        self.requires("gtest/1.14.0", transitive_headers=True)
 
         if self.version is None:
-            self.requires(f"rest-api-core/{os.environ['VERSION']}")
+            self.requires(f"rest-api-core/{os.environ['VERSION']}", transitive_headers=True)
         else:
-            self.requires(f"rest-api-core/{self.version}")
+            self.requires(f"rest-api-core/{self.version}", transitive_headers=True)
 
     def layout(self):
         # Binaries are built by the root recipe
