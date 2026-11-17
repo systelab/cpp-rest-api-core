@@ -1,5 +1,6 @@
 import os
 from conan import ConanFile
+from conan.errors import ConanInvalidConfiguration
 from conan.tools.files import copy
 
 required_conan_version = ">=2.0.0"
@@ -18,15 +19,13 @@ class RESTAPICoreTestUtilitiesConan(ConanFile):
     exports_sources = "CMakeLists.txt", "stdafx.h", "Builders/*", "Comparators/*", "Mocks/*", "Stubs/*"
 
     def requirements(self):
-        self.requires("gtest/1.14.0", transitive_headers=True)
-
         if self.version is None:
-            self.requires(f"rest-api-core/{os.environ['VERSION']}", transitive_headers=True)
-        else:
-            self.requires(f"rest-api-core/{self.version}", transitive_headers=True)
+            raise ConanInvalidConfiguration("A version is required")
+        
+        self.requires("gtest/1.14.0", transitive_headers=True)
+        self.requires(f"rest-api-core/{self.version}", transitive_headers=True)
 
     def layout(self):
-        # Binaries are built by the root recipe
         self.folders.build = os.path.join("..", "..", "build", f"{self.settings.arch}-{str(self.settings.build_type).lower()}")
 
     def package(self):
