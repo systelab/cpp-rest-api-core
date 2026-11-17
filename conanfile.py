@@ -19,7 +19,16 @@ class RESTAPICoreConan(ConanFile):
     def export_sources(self):
         copy(self, "CMakeLists.txt", self.recipe_folder, self.export_sources_folder)
         copy(self, "src/*", self.recipe_folder, self.export_sources_folder)
-        copy(self, "test/*", self.recipe_folder, self.export_sources_folder, excludes=["*/build/*", "*.bat", "*.sh", "*.ps1"])
+        for pattern in [
+            "test/RESTAPICoreTest/*",
+            "test/RESTAPICoreTestUtilities/CMakeLists.txt",
+            "test/RESTAPICoreTestUtilities/stdafx.h",
+            "test/RESTAPICoreTestUtilities/Builders/*",
+            "test/RESTAPICoreTestUtilities/Comparators/*",
+            "test/RESTAPICoreTestUtilities/Mocks/*",
+            "test/RESTAPICoreTestUtilities/Stubs/*",
+        ]:
+            copy(self, pattern, self.recipe_folder, self.export_sources_folder)
 
     def requirements(self):
         self.requires("web-server-adapter-interface/2.0.3", transitive_headers=True)
