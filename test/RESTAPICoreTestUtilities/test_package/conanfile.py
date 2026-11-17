@@ -5,7 +5,6 @@ from conan.tools.cmake import CMake, CMakeDeps, CMakeToolchain, cmake_layout
 
 class RESTAPICoreTestUtilitiesTestConan(ConanFile):
     settings = "os", "compiler", "build_type", "arch"
-    test_type = "explicit"
 
     def requirements(self):
         self.requires(self.tested_reference_str)
