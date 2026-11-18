@@ -1,9 +1,9 @@
 [settings]
 os=Windows
-os_build=Windows
-compiler=Visual Studio
-compiler.version=17
-compiler.toolset=v143
+compiler=msvc
+compiler.version=194
+compiler.cppstd=20
+compiler.runtime=dynamic
 
 [options]
-openssl:shared=True
+openssl/*:shared=True

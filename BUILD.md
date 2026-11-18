@@ -24,8 +24,8 @@ In order to build the application on Windows for the `Release` configuration, ru
 > git clone https://github.com/systelab/cpp-rest-api-core
 > md build && cd build
 > conan remote add systelab-public https://systelab.jfrog.io/artifactory/api/conan/cpp-conan-production-local
-> conan install . --profile=vs2022.conanprofile -s build_type=Release -s arch=x86_64 --install-folder build/Release_x64
-> conan build . --build-folder build/Release_x64
+> conan install . --profile:all=vs2022.conanprofile -s:a build_type=Release -s:a arch=x86_64
+> conan build . --profile:all=vs2022.conanprofile -s:a build_type=Release -s:a arch=x86_64
 ```
 
 However, if you want to `Debug` the source code, you will need these commands:
@@ -34,8 +34,8 @@ However, if you want to `Debug` the source code, you will need these commands:
 > git clone https://github.com/systelab/cpp-rest-api-core
 > md build && cd build
 > conan remote add systelab-public https://systelab.jfrog.io/artifactory/api/conan/cpp-conan-production-local
-> conan install . --profile=vs2022.conanprofile -s build_type=Debug -s arch=x86_64 --install-folder build/Debug_x64
-> conan build . --build-folder build/Debug_x64
+> conan install . --profile:all=vs2022.conanprofile -s:a build_type=Debug -s:a arch=x86_64
+> conan build . --profile:all=vs2022.conanprofile -s:a build_type=Debug -s:a arch=x86_64
 ```
 
 ### Linux

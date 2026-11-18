@@ -1,44 +1,86 @@
-from conans import ConanFile, CMake, tools
+from conan import ConanFile
+from conan.tools.cmake import CMake, CMakeDeps, CMakeToolchain, cmake_layout
+from conan.tools.files import copy
+
+required_conan_version = ">=2.0.0"
+
 
 class RESTAPICoreConan(ConanFile):
-    name = "RESTAPICore"
+    name = "rest-api-core"
     description = "C++ REST API framework"
     url = "https://github.com/systelab/cpp-rest-api-core"
     homepage = "https://github.com/systelab/cpp-rest-api-core"
     author = "CSW <csw@werfen.com>"
     topics = ("conan", "rest", "api", "framework")
     license = "MIT"
-    generators = "cmake_find_package"
+    package_type = "static-library"
     settings = "os", "compiler", "build_type", "arch"
-    exports_sources = "*", "!test/RESTAPICoreTestUtilities", "!build*", "!*.yml", "!*.md", "!*.in", "!ci", "!.gitattributes", "!.gitignore", "!LICENSE"
+
+    def export_sources(self):
+        copy(self, "CMakeLists.txt", self.recipe_folder, self.export_sources_folder)
+        copy(self, "src/*", self.recipe_folder, self.export_sources_folder)
+        for pattern in [
+            "test/RESTAPICoreTest/*",
+            "test/RESTAPICoreTestUtilities/CMakeLists.txt",
+            "test/RESTAPICoreTestUtilities/stdafx.h",
+            "test/RESTAPICoreTestUtilities/Builders/*",
+            "test/RESTAPICoreTestUtilities/Comparators/*",
+            "test/RESTAPICoreTestUtilities/Mocks/*",
+            "test/RESTAPICoreTestUtilities/Stubs/*",
+        ]:
+            copy(self, pattern, self.recipe_folder, self.export_sources_folder)
 
     def requirements(self):
-        self.requires("WebServerAdapterInterface/2.0.2@systelab/stable")
-        self.requires("JWTUtils/1.2.1@systelab/stable")
-        self.requires("TimeAdapter/1.0.6@systelab/stable")
+        self.requires("web-server-adapter-interface/2.0.3", transitive_headers=True)
+        self.requires("jwt-utils/1.2.5")
+        self.requires("time-adapter/1.0.7")
+        self.requires("rapidjson-adapter/1.2.1")
 
-        self.requires("gtest/1.14.0#4372c5aed2b4018ed9f9da3e218d18b3", override=True) # Hack
-        self.requires("RapidJSONAdapter/1.1.7@systelab/stable", override=True)
-        self.requires("TestUtilitiesInterface/1.0.8@systelab/stable", private=True)
-        self.requires("WebServerAdapterTestUtilities/2.0.2@systelab/stable", private=True)
-        self.requires("JSONAdapterTestUtilities/1.1.6@systelab/stable", private=True)
-        self.requires("TimeAdapterTestUtilities/1.0.6@systelab/stable", private=True)
+    def build_requirements(self):
+        self.test_requires("gtest/1.14.0")
+        self.test_requires("test-utilities-interface/1.1.0")
+        self.test_requires("web-server-adapter-test-utilities/2.0.3")
+        self.test_requires("json-adapter-test-utilities/1.2.1")
+        self.test_requires("time-adapter-test-utilities/1.0.7")
+
+    def layout(self):
+        self.folders.build_folder_vars = ["settings.arch", "settings.build_type"]
+        cmake_layout(self)
+
+    def generate(self):
+        CMakeDeps(self).generate()
+        CMakeToolchain(self).generate()
+
+        runtime_dst = f"{self.build_folder}/bin/{self.settings.build_type}"
+        for dep in self.dependencies.values():
+            for bindir in dep.cpp_info.bindirs:
+                copy(self, "*.dll", bindir, runtime_dst, keep_path=False)
+            for libdir in dep.cpp_info.libdirs:
+                copy(self, "*.dylib*", libdir, runtime_dst, keep_path=False)
+                copy(self, "*.so*", libdir, runtime_dst, keep_path=False)
 
     def build(self):
         cmake = CMake(self)
         cmake.configure()
         cmake.build()
 
-    def imports(self):
-        self.copy("*.dll", dst=("bin/%s" % self.settings.build_type), src="bin")
-        self.copy("*.dylib*", dst=("bin/%s" % self.settings.build_type), src="lib")
-        self.copy("*.so*", dst=("bin/%s" % self.settings.build_type), src="lib")
-
     def package(self):
-        self.copy("*.h", dst="include/RESTAPICore", src="src/RESTAPICore")
-        self.copy("*RESTAPICore.lib", dst="lib", keep_path=False)
-        self.copy("*RESTAPICore.pdb", dst="lib", keep_path=False)
-        self.copy("*RESTAPICore.a", dst="lib", keep_path=False)
+        if self.settings.os == "Windows":
+            libs_folder = f"{self.build_folder}/lib/{self.settings.build_type}"
+        else:
+            libs_folder = f"{self.build_folder}/lib"
+        copy(self, "*.h", f"{self.source_folder}/src/RESTAPICore", f"{self.package_folder}/include/RESTAPICore")
+        copy(self, "*RESTAPICore.lib", libs_folder, f"{self.package_folder}/lib", keep_path=False)
+        copy(self, "*RESTAPICore.pdb", libs_folder, f"{self.package_folder}/lib", keep_path=False)
+        copy(self, "*RESTAPICore.a", libs_folder, f"{self.package_folder}/lib", keep_path=False)
 
     def package_info(self):
-        self.cpp_info.libs = tools.collect_libs(self)
+        self.cpp_info.set_property("cmake_file_name", "RESTAPICore")
+        self.cpp_info.set_property("cmake_target_name", "RESTAPICore::RESTAPICore")
+        self.cpp_info.libs = ["RESTAPICore"]
+        self.cpp_info.requires = [
+            "web-server-adapter-interface::web-server-adapter-interface",
+            "jwt-utils::jwt-utils",
+            "time-adapter::time-adapter",
+            "rapidjson-adapter::rapidjson-adapter",
+        ]
